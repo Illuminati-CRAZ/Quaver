@@ -15,6 +15,8 @@ namespace Quaver.Shared.Screens.Edit.UI.Panels.Layers
 {
     public class DrawableEditorLayerRightClickOptions : RightClickOptions
     {
+        private const string MoveNotes = "Move Notes";
+
         private const string EditName = "Edit Name";
 
         private const string ChangeColor = "Change Color";
@@ -28,6 +30,9 @@ namespace Quaver.Shared.Screens.Edit.UI.Panels.Layers
             {
                 switch (args.Text)
                 {
+                    case MoveNotes:
+                        manager.MoveHitObjectsToLayer(layer, manager.EditScreen.SelectedHitObjects.Value);
+                        break;
                     case EditName:
                         if (layer == manager.EditScreen.DefaultLayer)
                         {
@@ -64,6 +69,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Panels.Layers
 
         private static Dictionary<string, Color> GetOptions() => new Dictionary<string, Color>()
         {
+            {MoveNotes, ColorHelper.HexToColor("#DBDE50")},
             {EditName, ColorHelper.HexToColor("#0787E3")},
             {ChangeColor, ColorHelper.HexToColor("#27B06E")},
             {Merge, ColorHelper.HexToColor("#8622e3")},
