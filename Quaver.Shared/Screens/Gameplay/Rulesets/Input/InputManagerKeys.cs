@@ -207,7 +207,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Input
             {
                 // Handle early miss cases here.
                 case Judgement.Miss when gameplayHitObject.Info.IsLongNote:
-                    // Add another miss when hit missing LNS
+                    // Add another miss when hit missing LNs
                     ((ScoreProcessorKeys)Ruleset.ScoreProcessor).CalculateScore(Judgement.Miss, true);
                     Ruleset.ScoreProcessor.Stats.Add(
                         new HitStat(

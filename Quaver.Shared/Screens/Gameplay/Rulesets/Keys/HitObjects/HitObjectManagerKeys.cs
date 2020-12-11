@@ -474,7 +474,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             // Add more hit objects to the pool if necessary
             foreach (var lane in HitObjectQueueLanes)
             {
-                while (lane.Count > 0 && CurrentTrackPosition - GetPositionFromTime(lane.Peek().StartTime) > CreateObjectPosition)
+                while (lane.Count > 0 && (CurrentTrackPosition - GetPositionFromTime(lane.Peek().StartTime) > CreateObjectPosition || (CurrentAudioPosition - lane.Peek().StartTime > CreateObjectPosition / TrackRounding)))
                 {
                     CreatePoolObject(lane.Dequeue());
                 }
@@ -578,7 +578,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             // The release window. (Window * Multiplier)
             var window = Ruleset.ScoreProcessor.JudgementWindow[Judgement.Okay] * Ruleset.ScoreProcessor.WindowReleaseMultiplier[Judgement.Okay];
 
-            // Check to see if any LN releases were missed (Counts as an okay instead of a miss.)
+            // Check to see if any LN releases were missed (Counts as a good instead of a miss.)
             foreach (var lane in HeldLongNoteLanes)
             {
                 while (lane.Count > 0 && (int)CurrentAudioPosition > lane.Peek().Info.EndTime + window)
