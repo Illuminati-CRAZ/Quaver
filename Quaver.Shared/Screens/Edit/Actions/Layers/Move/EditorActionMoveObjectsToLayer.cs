@@ -41,7 +41,7 @@ namespace Quaver.Shared.Screens.Edit.Actions.Layers.Move
             {
                 OriginalLayers.Add(x.EditorLayer);
 
-                if (Layer == null)
+                if (Layer == ActionManager.EditScreen.DefaultLayer)
                     x.EditorLayer = 0;
                 else
                 {

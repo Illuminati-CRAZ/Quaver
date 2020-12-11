@@ -208,7 +208,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Menu
             {
                 if (ImGui.MenuItem("Default Layer", ""))
                 {
-                    Screen.ActionManager.Perform(new EditorActionMoveObjectsToLayer(Screen.ActionManager, Screen.WorkingMap, null,
+                    Screen.ActionManager.Perform(new EditorActionMoveObjectsToLayer(Screen.ActionManager, Screen.WorkingMap, Screen.DefaultLayer,
                         new List<HitObjectInfo>(Screen.SelectedHitObjects.Value)));
                 }
 
