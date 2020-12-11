@@ -31,7 +31,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Panels.Layers
                 switch (args.Text)
                 {
                     case MoveNotes:
-                        manager.MoveHitObjectsToLayer(layer, manager.EditScreen.SelectedHitObjects.Value);
+                        manager.MoveHitObjectsToLayer(layer, new List<HitObjectInfo>(manager.EditScreen.SelectedHitObjects.Value));
                         break;
                     case EditName:
                         if (layer == manager.EditScreen.DefaultLayer)
