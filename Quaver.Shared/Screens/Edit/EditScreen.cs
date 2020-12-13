@@ -1031,7 +1031,7 @@ namespace Quaver.Shared.Screens.Edit
                 clonedObjects.Add(hitObject);
             }
 
-            ActionManager.Perform(new EditorActionPlaceHitObjectBatch(ActionManager, WorkingMap, clonedObjects));
+            ActionManager.Perform(new EditorActionPlaceHitObjectBatch(ActionManager, WorkingMap, clonedObjects, SelectedHitObjects));
 
             SelectedHitObjects.Clear();
             SelectedHitObjects.AddRange(clonedObjects);
@@ -1057,8 +1057,7 @@ namespace Quaver.Shared.Screens.Edit
             if (SelectedHitObjects.Value.Count == 0)
                 return;
 
-            ActionManager.Perform(new EditorActionRemoveHitObjectBatch(ActionManager, WorkingMap, new List<HitObjectInfo>(SelectedHitObjects.Value)));
-            SelectedHitObjects.Clear();
+            ActionManager.Perform(new EditorActionRemoveHitObjectBatch(ActionManager, WorkingMap, new List<HitObjectInfo>(SelectedHitObjects.Value), SelectedHitObjects));
         }
 
         /// <summary>

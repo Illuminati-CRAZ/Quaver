@@ -281,7 +281,7 @@ namespace Quaver.Shared.Screens.Edit.Actions
         /// <summary>
         /// </summary>
         /// <param name="h"></param>
-        public void PlaceHitObject(HitObjectInfo h) => Perform(new EditorActionPlaceHitObject(this, WorkingMap, h));
+        public void PlaceHitObject(HitObjectInfo h) => Perform(new EditorActionPlaceHitObject(this, WorkingMap, h, EditScreen.SelectedHitObjects));
 
         /// <summary>
         /// </summary>
@@ -301,7 +301,7 @@ namespace Quaver.Shared.Screens.Edit.Actions
                 HitSound = hitsounds
             };
 
-            Perform(new EditorActionPlaceHitObject(this, WorkingMap, hitObject));
+            Perform(new EditorActionPlaceHitObject(this, WorkingMap, hitObject, EditScreen.SelectedHitObjects));
 
             return hitObject;
         }
@@ -309,20 +309,20 @@ namespace Quaver.Shared.Screens.Edit.Actions
         /// <summary>
         /// </summary>
         /// <param name="hitObjects"></param>
-        public void PlaceHitObjectBatch(List<HitObjectInfo> hitObjects) => Perform(new EditorActionPlaceHitObjectBatch(this, WorkingMap, hitObjects));
+        public void PlaceHitObjectBatch(List<HitObjectInfo> hitObjects) => Perform(new EditorActionPlaceHitObjectBatch(this, WorkingMap, hitObjects, EditScreen.SelectedHitObjects));
 
         /// <summary>
         ///     Removes a HitObject from the map
         /// </summary>
         /// <param name="h"></param>
-        public void RemoveHitObject(HitObjectInfo h) => Perform(new EditorActionRemoveHitObject(this, WorkingMap, h));
+        public void RemoveHitObject(HitObjectInfo h) => Perform(new EditorActionRemoveHitObject(this, WorkingMap, h, EditScreen.SelectedHitObjects));
 
         /// <summary>
         ///     Removes a list of objects from the map
         /// </summary>
         /// <param name="objects"></param>
         public void RemoveHitObjectBatch(List<HitObjectInfo> objects) =>
-            Perform(new EditorActionRemoveHitObjectBatch(this, WorkingMap, objects));
+            Perform(new EditorActionRemoveHitObjectBatch(this, WorkingMap, objects, EditScreen.SelectedHitObjects));
 
         /// <summary>
         ///     Resizes a hitobject/long note to a given time

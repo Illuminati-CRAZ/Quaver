@@ -1,6 +1,7 @@
 using Quaver.API.Maps;
 using Quaver.API.Maps.Structures;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Remove;
+using Wobble.Bindables;
 
 namespace Quaver.Shared.Screens.Edit.Actions.HitObjects.Place
 {
@@ -25,14 +26,19 @@ namespace Quaver.Shared.Screens.Edit.Actions.HitObjects.Place
 
         /// <summary>
         /// </summary>
+        private BindableList<HitObjectInfo> SelectedHitObjects { get; }
+
+        /// <summary>
+        /// </summary>
         /// <param name="actionManager"></param>
         /// <param name="workingMap"></param>
         /// <param name="hitObject"></param>
-        public EditorActionPlaceHitObject(EditorActionManager actionManager, Qua workingMap, HitObjectInfo hitObject)
+        public EditorActionPlaceHitObject(EditorActionManager actionManager, Qua workingMap, HitObjectInfo hitObject, BindableList<HitObjectInfo> selectedHitObjects)
         {
             WorkingMap = workingMap;
             HitObject = hitObject;
             ActionManager = actionManager;
+            SelectedHitObjects = selectedHitObjects;
         }
 
         /// <inheritdoc />
@@ -49,6 +55,6 @@ namespace Quaver.Shared.Screens.Edit.Actions.HitObjects.Place
         /// <inheritdoc />
         /// <summary>
         /// </summary>
-        public void Undo() => new EditorActionRemoveHitObject(ActionManager, WorkingMap, HitObject).Perform();
+        public void Undo() => new EditorActionRemoveHitObject(ActionManager, WorkingMap, HitObject, SelectedHitObjects).Perform();
     }
 }

@@ -47,12 +47,9 @@ namespace Quaver.Shared.Screens.Edit.Actions.Layers.Remove
 
             HitObjectsInLayer = WorkingMap.HitObjects.FindAll(x => x.EditorLayer == index);
 
-            // Remove the objects from being selected
-            HitObjectsInLayer.ForEach(x => SelectedHitObjects.Remove(x));
+            new EditorActionRemoveHitObjectBatch(ActionManager, WorkingMap, HitObjectsInLayer, SelectedHitObjects).Perform();
 
             WorkingMap.EditorLayers.Remove(Layer);
-
-            new EditorActionRemoveHitObjectBatch(ActionManager, WorkingMap, HitObjectsInLayer).Perform();
 
             // Find HitObjects at the indices above it and update them
             var hitObjects = WorkingMap.HitObjects.FindAll(x => x.EditorLayer > index);
@@ -63,7 +60,7 @@ namespace Quaver.Shared.Screens.Edit.Actions.Layers.Remove
 
         public void Undo()
         {
-            new EditorActionPlaceHitObjectBatch(ActionManager, WorkingMap, HitObjectsInLayer).Perform();
+            new EditorActionPlaceHitObjectBatch(ActionManager, WorkingMap, HitObjectsInLayer, SelectedHitObjects).Perform();
             new EditorActionCreateLayer(WorkingMap, ActionManager, SelectedHitObjects, Layer).Perform();
             HitObjectsInLayer.ForEach(x => x.EditorLayer = WorkingMap.EditorLayers.Count);
         }
