@@ -23,6 +23,7 @@ using Quaver.Shared.Screens.Edit.Actions.Hitsounds.Add;
 using Quaver.Shared.Screens.Edit.Actions.Hitsounds.Remove;
 using Quaver.Shared.Screens.Edit.Actions.Layers.Colors;
 using Quaver.Shared.Screens.Edit.Actions.Layers.Create;
+using Quaver.Shared.Screens.Edit.Actions.Layers.Merge;
 using Quaver.Shared.Screens.Edit.Actions.Layers.Move;
 using Quaver.Shared.Screens.Edit.Actions.Layers.Remove;
 using Quaver.Shared.Screens.Edit.Actions.Layers.Rename;
@@ -54,7 +55,7 @@ namespace Quaver.Shared.Screens.Edit.Actions
     {
         /// <summary>
         /// </summary>
-        private EditScreen EditScreen { get; }
+        public EditScreen EditScreen { get; }
 
         /// <summary>
         /// </summary>
@@ -463,6 +464,22 @@ namespace Quaver.Shared.Screens.Edit.Actions
         /// <param name="layer"></param>
         /// <param name="hitObjects"></param>
         public void MoveHitObjectsToLayer(EditorLayerInfo layer, List<HitObjectInfo> hitObjects) => Perform(new EditorActionMoveObjectsToLayer(this, WorkingMap, layer, hitObjects));
+
+        /// <summary>
+        ///     Merges a non-default layer into another layer
+        /// </summary>
+        /// <param name="originLayer"></param>
+        /// <param name="destinationLayer"></param>
+        public void MergeLayers(EditorLayerInfo originLayer, EditorLayerInfo destinationLayer)
+        {
+            if (originLayer == destinationLayer)
+                return;
+
+            if (originLayer == EditScreen.DefaultLayer)
+                return;
+
+            Perform(new EditorActionMergeLayers(this, WorkingMap, originLayer, destinationLayer, EditScreen.SelectedHitObjects));
+        }
 
         /// <summary>
         ///     Changes the color of a non-default editor layer

@@ -202,7 +202,7 @@ namespace Quaver.Shared.Screens.Edit
 
         /// <summary>
         /// </summary>
-        public Bindable<EditorLayerInfo> SelectedLayer { get; } = new Bindable<EditorLayerInfo>(null);
+        public Bindable<EditorLayerInfo> SelectedLayer { get; }
 
         /// <summary>
         ///     Objects that are currently copied
@@ -249,6 +249,7 @@ namespace Quaver.Shared.Screens.Edit
             ActionManager = new EditorActionManager(this, WorkingMap);
             UneditableMap = new Bindable<Qua>(null);
             Metronome = new Metronome(WorkingMap, Track, ConfigManager.GlobalAudioOffset ?? new BindableInt(0, -500, 500), MetronomePlayHalfBeats);
+            SelectedLayer = new Bindable<EditorLayerInfo>(DefaultLayer);
 
             LoadSkin();
             SetHitSoundObjectIndex();
@@ -557,9 +558,6 @@ namespace Quaver.Shared.Screens.Edit
             if (!KeyboardManager.IsUniqueKeyPress(Keys.H) || !KeyboardManager.IsShiftDown())
                 return;
 
-            if (SelectedLayer.Value == null)
-                SelectedLayer.Value = DefaultLayer;
-
             SelectedLayer.Value.Hidden = !SelectedLayer.Value.Hidden;
         }
 
@@ -719,6 +717,14 @@ namespace Quaver.Shared.Screens.Edit
 
             if (KeyboardManager.IsUniqueKeyPress(Keys.I))
                 PlaceTimingPointOrScrollVelocity();
+
+            if (KeyboardManager.IsUniqueKeyPress(Keys.M))
+            {
+                if (KeyboardManager.IsAltDown())
+                    MergeOntoDefault();
+                else
+                    MergeUp();
+            }
         }
 
         /// <summary>
@@ -1077,7 +1083,7 @@ namespace Quaver.Shared.Screens.Edit
         {
             var layer = 0;
 
-            if (SelectedLayer.Value != null)
+            if (SelectedLayer.Value != DefaultLayer)
                 layer = WorkingMap.EditorLayers.IndexOf(SelectedLayer.Value) + 1;
 
             var objects = WorkingMap.HitObjects.FindAll(x => x.EditorLayer == layer && !SelectedHitObjects.Value.Contains(x));
@@ -1443,6 +1449,37 @@ namespace Quaver.Shared.Screens.Edit
                     });
                 }
             }
+        }
+
+        /// <summary>
+        ///     Merges the currently selected layer onto the default layer.
+        /// </summary>
+        private void MergeOntoDefault()
+        {
+            if (SelectedLayer.Value == DefaultLayer)
+            {
+                NotificationManager.Show(NotificationLevel.Warning, "You cannot merge the default layer into another layer!");
+                return;
+            }
+
+            ActionManager.MergeLayers(SelectedLayer.Value, DefaultLayer);
+        }
+
+        /// <summary>
+        ///     Merges the currently selected layer onto the layer above it.
+        /// </summary>
+        private void MergeUp()
+        {
+            if (SelectedLayer.Value == DefaultLayer)
+            {
+                NotificationManager.Show(NotificationLevel.Warning, "You cannot merge the default layer into another layer!");
+                return;
+            }
+
+            var index = WorkingMap.EditorLayers.IndexOf(SelectedLayer.Value);
+            var destLayer = index == 0 ? DefaultLayer :WorkingMap.EditorLayers[index - 1];
+
+            ActionManager.MergeLayers(SelectedLayer.Value, destLayer);
         }
 
         /// <summary>
