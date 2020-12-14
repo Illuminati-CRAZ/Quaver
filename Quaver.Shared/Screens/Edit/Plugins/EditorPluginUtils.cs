@@ -92,13 +92,14 @@ namespace Quaver.Shared.Screens.Edit.Plugins
         /// <param name="bpm"></param>
         /// <param name="signature"></param>
         /// <returns></returns>
-        public static TimingPointInfo CreateTimingPoint(float startTime, float bpm, TimeSignature signature = TimeSignature.Quadruple)
+        public static TimingPointInfo CreateTimingPoint(float startTime, float bpm, TimeSignature signature = TimeSignature.Quadruple, bool hidden = false)
         {
             var tp = new TimingPointInfo()
             {
                 StartTime = startTime,
                 Bpm = bpm,
-                Signature = signature
+                Signature = signature,
+                Hidden = hidden
             };
 
             return tp;
