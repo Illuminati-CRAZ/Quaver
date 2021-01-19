@@ -225,6 +225,10 @@ namespace Quaver.Shared.Screens.Edit
 
         /// <summary>
         /// </summary>
+        private FileSystemWatcher FileWatcher { get; set; }
+
+        /// <summary>
+        /// </summary>
         public EditScreen(Map map, IAudioTrack track = null, EditorVisualTestBackground visualTestBackground = null)
         {
             Map = map;
@@ -262,6 +266,8 @@ namespace Quaver.Shared.Screens.Edit
             GameBase.Game.Window.FileDropped += OnFileDropped;
 
             InitializeDiscordRichPresence();
+            AddFileWatcher();
+
             View = new EditScreenView(this);
         }
 
@@ -321,6 +327,7 @@ namespace Quaver.Shared.Screens.Edit
             SelectedHitObjects.Dispose();
             SelectedLayer.Dispose();
             ActiveLeftPanel.Dispose();
+            FileWatcher?.Dispose();
 
             if (PlayfieldScrollSpeed != ConfigManager.EditorScrollSpeedKeys)
                 PlayfieldScrollSpeed.Dispose();
@@ -712,6 +719,9 @@ namespace Quaver.Shared.Screens.Edit
             if (KeyboardManager.IsUniqueKeyPress(Keys.S))
                 Save();
 
+            if (KeyboardManager.IsUniqueKeyPress(Keys.R))
+                RefreshFileCache();
+
             if (KeyboardManager.IsUniqueKeyPress(Keys.N))
                 DialogManager.Show(new EditorNewSongDialog());
 
@@ -757,6 +767,8 @@ namespace Quaver.Shared.Screens.Edit
 
                 var lane = i + 1;
 
+                var layer = WorkingMap.EditorLayers.FindIndex(l => l == SelectedLayer.Value) + 1;
+
                 // Can be multiple if overlap
                 var hitObjectsAtTime = WorkingMap.HitObjects.Where(h => h.Lane == lane && h.StartTime == time).ToList();
 
@@ -766,7 +778,7 @@ namespace Quaver.Shared.Screens.Edit
                         ActionManager.RemoveHitObject(note);
                 }
                 else
-                    ActionManager.PlaceHitObject(lane, time);
+                    ActionManager.PlaceHitObject(lane, time, 0, layer);
             }
         }
 
@@ -1175,15 +1187,13 @@ namespace Quaver.Shared.Screens.Edit
 
             try
             {
-                var path = $"{ConfigManager.SongDirectory}/{Map.Directory}/{Map.Path}";
-
                 if (synchronous)
-                    WorkingMap.Save(path);
+                    SaveWorkingMap();
                 else
                 {
                     ThreadScheduler.Run(() =>
                     {
-                        WorkingMap.Save(path);
+                        SaveWorkingMap();
                         NotificationManager.Show(NotificationLevel.Success, "Your map has been successfully saved!");
                     });
                 }
@@ -1202,6 +1212,26 @@ namespace Quaver.Shared.Screens.Edit
                 Logger.Error(e, LogType.Runtime);
                 NotificationManager.Show(NotificationLevel.Error, "There was an issue while saving your map!");
             }
+        }
+
+        /// <summary>
+        /// </summary>
+        private void SaveWorkingMap()
+        {
+            FileWatcher.EnableRaisingEvents = false;
+            WorkingMap.Save($"{ConfigManager.SongDirectory}/{Map.Directory}/{Map.Path}");
+            FileWatcher.EnableRaisingEvents = true;
+        }
+
+        /// <summary>
+        ///     Schedule Refresh for an outdated .qua file
+        /// </summary>
+        public void RefreshFileCache()
+        {
+            if (!MapDatabaseCache.MapsToUpdate.Contains(MapManager.Selected.Value))
+                MapDatabaseCache.MapsToUpdate.Add(MapManager.Selected.Value);
+
+            NotificationManager.Show(NotificationLevel.Info, $"The cached data for this file will be updated when you leave the editor.");
         }
 
         /// <summary>
@@ -1523,6 +1553,27 @@ namespace Quaver.Shared.Screens.Edit
             {
                 Logger.Error(e, LogType.Runtime);
             }
+        }
+
+        /// <summary>
+        /// </summary>
+        private void AddFileWatcher()
+        {
+            FileWatcher = new FileSystemWatcher($"{ConfigManager.SongDirectory}/{Map.Directory}")
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                Filter = $"{Map.Path}"
+            };
+
+            FileWatcher.Changed += (sender, args) =>
+            {
+                if (DialogManager.Dialogs.Count != 0)
+                    return;
+
+                DialogManager.Show(new EditorManualChangesDialog(this));
+            };
+
+            FileWatcher.EnableRaisingEvents = true;
         }
 
         /// <summary>
