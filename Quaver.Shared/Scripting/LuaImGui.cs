@@ -172,7 +172,7 @@ namespace Quaver.Shared.Scripting
         /// </summary>
         private void LoadScript()
         {
-            WorkingScript = new Script(CoreModules.Preset_HardSandbox);
+            WorkingScript = new Script(CoreModules.Preset_Complete);
 
             try
             {
