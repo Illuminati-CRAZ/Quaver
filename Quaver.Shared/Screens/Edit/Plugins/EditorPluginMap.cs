@@ -32,6 +32,11 @@ namespace Quaver.Shared.Screens.Edit.Plugins
         public bool Normalized { get; [MoonSharpVisible(false)] set; }
 
         /// <summary>
+        ///     The SV multiplier to use before the first SV when BPM does not affect scroll velocity
+        /// </summary>
+        public float InitialScrollVelocity { get; [MoonSharpVisible(false)] set; }
+
+        /// <summary>
         ///     The slider velocities present in the map
         /// </summary>
         public List<SliderVelocityInfo> ScrollVelocities { get; [MoonSharpVisible(false)] set; }
