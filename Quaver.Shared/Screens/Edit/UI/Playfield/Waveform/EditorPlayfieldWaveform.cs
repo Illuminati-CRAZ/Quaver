@@ -78,8 +78,9 @@ namespace Quaver.Shared.Screens.Edit.UI.Playfield.Waveform
             GenerateTrackData();
 
             var tempSlices = new List<EditorPlayfieldWaveformSlice>();
+            int t;
 
-            for (var t = 0; t < TrackLengthMilliSeconds; t += SliceSize)
+            for (t = 0; t < TrackLengthMilliSeconds; t += SliceSize)
             {
                 var trackSliceData = new float[SliceSize, 2];
 
@@ -100,6 +101,10 @@ namespace Quaver.Shared.Screens.Edit.UI.Playfield.Waveform
                 tempSlices.Add(slice);
             }
 
+            Logger.Debug("Waveform: t = " + t, LogType.Runtime);
+            Logger.Debug("Waveform: TrackLengthMilliSeconds = " + TrackLengthMilliSeconds, LogType.Runtime);
+            Logger.Debug("Waveform: Audio.AudioEngine.Track.Time = " + Audio.AudioEngine.Track.Time, LogType.Runtime);
+
             Slices = tempSlices;
             Bass.StreamFree(Stream);
         }
@@ -113,11 +118,15 @@ namespace Quaver.Shared.Screens.Edit.UI.Playfield.Waveform
             Stream = Bass.CreateStream(((AudioTrack)Audio.AudioEngine.Track).OriginalFilePath, 0, 0, flags);
 
             TrackByteLength = Bass.ChannelGetLength(Stream);
+            Logger.Debug("Waveform: TrackByteLength = " + TrackByteLength, LogType.Runtime);
+
             TrackData = new float[TrackByteLength / sizeof(float)];
 
             TrackByteLength = Bass.ChannelGetData(Stream, TrackData, (int)TrackByteLength);
+            Logger.Debug("Waveform: TrackByteLength = " + TrackByteLength, LogType.Runtime);
 
             TrackLengthMilliSeconds = Bass.ChannelBytes2Seconds(Stream, TrackByteLength) * 1000.0;
+            Logger.Debug("Waveform: ChannelBytes2Seconds = " + Bass.ChannelBytes2Seconds(Stream, TrackByteLength), LogType.Runtime);
         }
 
         /// <summary>
