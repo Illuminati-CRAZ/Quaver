@@ -17,6 +17,7 @@ using Quaver.API.Helpers;
 using Quaver.API.Maps;
 using Quaver.API.Maps.Parsers;
 using Quaver.API.Maps.Parsers.Stepmania;
+using Quaver.API.Maps.Processors.Difficulty.Rulesets.Keys;
 using Quaver.Server.Client;
 using Quaver.Shared.Config;
 using Quaver.Shared.Database.Scores;
@@ -262,6 +263,15 @@ namespace Quaver.Shared.Database.Maps
         public double Difficulty20X { get; set; }
  #endregion
 
+        public float SVDifficulty { get; set; }
+        public float LengthMultiplierFactor { get; set; }
+        public float RawSVDifficulty { get; set; }
+
+        public float NoteSpacingFactor { get; set; }
+        public float NoteVisibilityFactor { get; set; }
+        public float ReadingHeightFactor { get; set; }
+        public float SpacingChaosFactor { get; set; }
+
         /// <summary>
         ///     Determines if this map is an osu! map.
         /// </summary>
@@ -432,37 +442,48 @@ namespace Quaver.Shared.Database.Maps
         {
             var qua = LoadQua(false);
 
-            Difficulty05X = qua.SolveDifficulty(ModIdentifier.Speed05X).OverallDifficulty;
-            Difficulty055X = qua.SolveDifficulty(ModIdentifier.Speed055X).OverallDifficulty;
-            Difficulty06X = qua.SolveDifficulty(ModIdentifier.Speed06X).OverallDifficulty;
-            Difficulty065X = qua.SolveDifficulty(ModIdentifier.Speed065X).OverallDifficulty;
-            Difficulty07X = qua.SolveDifficulty(ModIdentifier.Speed07X).OverallDifficulty;
-            Difficulty075X = qua.SolveDifficulty(ModIdentifier.Speed075X).OverallDifficulty;
-            Difficulty08X = qua.SolveDifficulty(ModIdentifier.Speed08X).OverallDifficulty;
-            Difficulty085X = qua.SolveDifficulty(ModIdentifier.Speed085X).OverallDifficulty;
-            Difficulty09X = qua.SolveDifficulty(ModIdentifier.Speed09X).OverallDifficulty;
-            Difficulty095X = qua.SolveDifficulty(ModIdentifier.Speed095X).OverallDifficulty;
-            Difficulty10X = qua.SolveDifficulty().OverallDifficulty;
-            Difficulty105X = qua.SolveDifficulty(ModIdentifier.Speed105X).OverallDifficulty;
-            Difficulty11X = qua.SolveDifficulty(ModIdentifier.Speed11X).OverallDifficulty;
-            Difficulty115X = qua.SolveDifficulty(ModIdentifier.Speed115X).OverallDifficulty;
-            Difficulty12X = qua.SolveDifficulty(ModIdentifier.Speed12X).OverallDifficulty;
-            Difficulty125X = qua.SolveDifficulty(ModIdentifier.Speed125X).OverallDifficulty;
-            Difficulty13X = qua.SolveDifficulty(ModIdentifier.Speed13X).OverallDifficulty;
-            Difficulty135X = qua.SolveDifficulty(ModIdentifier.Speed135X).OverallDifficulty;
-            Difficulty14X = qua.SolveDifficulty(ModIdentifier.Speed14X).OverallDifficulty;
-            Difficulty145X = qua.SolveDifficulty(ModIdentifier.Speed145X).OverallDifficulty;
-            Difficulty15X = qua.SolveDifficulty(ModIdentifier.Speed15X).OverallDifficulty;
-            Difficulty155X = qua.SolveDifficulty(ModIdentifier.Speed155X).OverallDifficulty;
-            Difficulty16X = qua.SolveDifficulty(ModIdentifier.Speed16X).OverallDifficulty;
-            Difficulty165X = qua.SolveDifficulty(ModIdentifier.Speed165X).OverallDifficulty;
-            Difficulty17X = qua.SolveDifficulty(ModIdentifier.Speed17X).OverallDifficulty;
-            Difficulty175X = qua.SolveDifficulty(ModIdentifier.Speed175X).OverallDifficulty;
-            Difficulty18X = qua.SolveDifficulty(ModIdentifier.Speed18X).OverallDifficulty;
-            Difficulty185X = qua.SolveDifficulty(ModIdentifier.Speed185X).OverallDifficulty;
-            Difficulty19X = qua.SolveDifficulty(ModIdentifier.Speed19X).OverallDifficulty;
-            Difficulty195X = qua.SolveDifficulty(ModIdentifier.Speed195X).OverallDifficulty;
-            Difficulty20X = qua.SolveDifficulty(ModIdentifier.Speed20X).OverallDifficulty;
+            var svDiffProcessor = new SVDIfficultyProcessorKeys(qua);
+
+            SVDifficulty = svDiffProcessor.SVDifficulty;
+            LengthMultiplierFactor = svDiffProcessor.LengthMultiplierFactor;
+            RawSVDifficulty = svDiffProcessor.RawSVDifficulty;
+
+            Difficulty05X = svDiffProcessor.SVDifficulty;
+            NoteSpacingFactor = svDiffProcessor.NoteSpacingFactor;
+            NoteVisibilityFactor = svDiffProcessor.NoteVisibilityFactor;
+            ReadingHeightFactor = svDiffProcessor.ReadingHeightFactor;
+            SpacingChaosFactor = svDiffProcessor.SpacingChaosFactor;
+
+            Difficulty055X = Difficulty05X;
+            Difficulty06X = Difficulty05X;
+            Difficulty065X = Difficulty05X;
+            Difficulty07X = Difficulty05X;
+            Difficulty075X = Difficulty05X;
+            Difficulty08X = Difficulty05X;
+            Difficulty085X = Difficulty05X;
+            Difficulty09X = Difficulty05X;
+            Difficulty095X = Difficulty05X;
+            Difficulty10X = Difficulty05X;
+            Difficulty105X = Difficulty05X;
+            Difficulty11X = Difficulty05X;
+            Difficulty115X = Difficulty05X;
+            Difficulty12X = Difficulty05X;
+            Difficulty125X = Difficulty05X;
+            Difficulty13X = Difficulty05X;
+            Difficulty135X = Difficulty05X;
+            Difficulty14X = Difficulty05X;
+            Difficulty145X = Difficulty05X;
+            Difficulty15X = Difficulty05X;
+            Difficulty155X = Difficulty05X;
+            Difficulty16X = Difficulty05X;
+            Difficulty165X = Difficulty05X;
+            Difficulty17X = Difficulty05X;
+            Difficulty175X = Difficulty05X;
+            Difficulty18X = Difficulty05X;
+            Difficulty185X = Difficulty05X;
+            Difficulty19X = Difficulty05X;
+            Difficulty195X = Difficulty05X;
+            Difficulty20X = Difficulty05X;
         }
 
         /// <summary>
