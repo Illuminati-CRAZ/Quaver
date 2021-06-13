@@ -350,17 +350,19 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             ReleaseHit.Destroy();
         }
 
+        public static float Transform(float position) => (float)((Math.Pow(position / 768 * -1 - 1, 2) * -1 + 1) * 768 * -1);
+
         /// <summary>
         ///     Calculates the position of the Hit Object with a position offset.
         /// </summary>
         /// <returns></returns>
-        public float GetSpritePosition(long offset, float initialPos) => HitPosition + ((initialPos - offset) * (ScrollDirection.Equals(ScrollDirection.Down) ? -HitObjectManagerKeys.ScrollSpeed : HitObjectManagerKeys.ScrollSpeed) / HitObjectManagerKeys.TrackRounding);
+        public float GetSpritePosition(long offset, float initialPos) => HitPosition + Transform(((initialPos - offset) * (ScrollDirection.Equals(ScrollDirection.Down) ? -HitObjectManagerKeys.ScrollSpeed : HitObjectManagerKeys.ScrollSpeed) / HitObjectManagerKeys.TrackRounding));
 
         /// <summary>
         ///     Calculates the position of the end Hit Object with a position offset.
         /// </summary>
         /// <returns></returns>
-        public float GetEndSpritePosition(long offset, float initialPos) => HoldEndHitPosition + ((initialPos - offset) * (ScrollDirection.Equals(ScrollDirection.Down) ? -HitObjectManagerKeys.ScrollSpeed : HitObjectManagerKeys.ScrollSpeed) / HitObjectManagerKeys.TrackRounding);
+        public float GetEndSpritePosition(long offset, float initialPos) => HoldEndHitPosition + Transform(((initialPos - offset) * (ScrollDirection.Equals(ScrollDirection.Down) ? -HitObjectManagerKeys.ScrollSpeed : HitObjectManagerKeys.ScrollSpeed) / HitObjectManagerKeys.TrackRounding));
 
         /// <summary>
         ///     Updates the earliest and latest track positions as well as the current LN body size.
