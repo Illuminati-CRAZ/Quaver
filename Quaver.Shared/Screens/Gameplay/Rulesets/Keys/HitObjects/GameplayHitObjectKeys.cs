@@ -408,7 +408,11 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
         /// </summary>
         public void UpdateSpritePositions(long offset, double curTime)
         {
-            HitObjectSprite.Alpha = (float)Math.Clamp(-5 * ((Info.StartTime - curTime) / 1000 - .4) + 1, .5f, 1f);
+            float baseAlpha = (float)Math.Clamp(-5 * ((Info.StartTime - curTime) / 1000 - .4) + 1, .5f, 1f);
+
+            HitObjectSprite.Alpha = baseAlpha;
+            LongNoteBodySprite.Alpha = baseAlpha * .7f;
+            LongNoteEndSprite.Alpha = baseAlpha * .7f;
 
             // Update Sprite position with regards to LN's state
             //
