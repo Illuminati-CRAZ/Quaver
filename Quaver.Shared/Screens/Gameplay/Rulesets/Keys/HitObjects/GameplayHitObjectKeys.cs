@@ -372,12 +372,17 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
         public void UpdateLongNoteSize(long offset, double curTime)
         {
             var startPosition = InitialTrackPosition;
-            if (curTime >= Info.StartTime)
+            if (CurrentlyBeingHeld && curTime >= Info.StartTime)
                 // If we're past the LN start, start from the current position.
                 startPosition = offset;
 
             var earliestPosition = Math.Min(startPosition, EndTrackPosition);
             var latestPosition = Math.Max(startPosition, EndTrackPosition);
+
+            long peakPosition = startPosition + (long)(768 / HitObjectManagerKeys.ScrollSpeed * HitObjectManagerKeys.TrackRounding);
+
+            if (startPosition <= peakPosition && peakPosition <= latestPosition)
+                latestPosition = peakPosition;
 
             EarliestTrackPosition = earliestPosition;
             LatestTrackPosition = latestPosition;
@@ -439,8 +444,8 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             //Update HoldBody Position and Size
             LongNoteBodySprite.Height = CurrentLongNoteBodySize;
 
-            var earliestSpritePosition = curTime > Info.StartTime ? GetSpritePosition(offset, offset) : GetSpritePosition(offset, InitialTrackPosition);
-            var latestSpritePosition = GetSpritePosition(offset, EndTrackPosition);
+            var earliestSpritePosition = GetSpritePosition(offset, EarliestTrackPosition);
+            var latestSpritePosition = GetEndSpritePosition(offset, LatestTrackPosition);
 
             if (ScrollDirection.Equals(ScrollDirection.Down))
                 LongNoteBodySprite.Y = Math.Max(earliestSpritePosition, latestSpritePosition) + LongNoteBodyOffset - CurrentLongNoteBodySize;
