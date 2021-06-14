@@ -403,6 +403,8 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
         /// </summary>
         public void UpdateSpritePositions(long offset, double curTime)
         {
+            HitObjectSprite.Alpha = (float)Math.Clamp(-5 * ((Info.StartTime - curTime) / 1000 - .4) + 1, .5f, 1f);
+
             // Update Sprite position with regards to LN's state
             //
             // If the LN end is not drawn, don't move the LN start up with time since it ends up sliding above the LN in
