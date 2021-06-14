@@ -200,6 +200,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             LongNoteBodySprite = new AnimatableSprite(bodies)
             {
                 Alignment = Alignment.TopLeft,
+                Alpha = .7f,
                 Size = new ScalableVector2(laneSize , 0),
                 Position = new ScalableVector2(posX, 0),
                 Parent = playfield.Stage.HitObjectContainer
@@ -209,6 +210,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             LongNoteEndSprite = new Sprite()
             {
                 Alignment = Alignment.TopLeft,
+                Alpha = .7f,
                 Position = new ScalableVector2(posX, 0),
                 Size = new ScalableVector2(laneSize, 0),
                 Parent = playfield.Stage.HitObjectContainer
