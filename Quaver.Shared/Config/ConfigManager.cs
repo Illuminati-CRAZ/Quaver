@@ -879,8 +879,8 @@ namespace Quaver.Shared.Config
             FpsLimiterType = ReadValue(@"FpsLimiterType", FpsLimitType.Unlimited, data);
             CustomFpsLimit = ReadInt(@"CustomFpsLimit", 240, 60, int.MaxValue, data);
             SmoothAudioTimingGameplay = ReadValue(@"SmoothAudioTimingGameplay", false, data);
-            ScrollSpeed4K = ReadInt(@"ScrollSpeed4K", 150, 50, 1000, data);
-            ScrollSpeed7K = ReadInt(@"ScrollSpeed7K", 150, 50, 1000, data);
+            ScrollSpeed4K = ReadInt(@"ScrollSpeed4K", 260, 50, 1000, data);
+            ScrollSpeed7K = ReadInt(@"ScrollSpeed7K", 260, 50, 1000, data);
             ScrollDirection4K = ReadValue(@"ScrollDirection4K", ScrollDirection.Down, data);
             ScrollDirection7K = ReadValue(@"ScrollDirection7K", ScrollDirection.Down, data);
             GlobalAudioOffset = ReadInt(@"GlobalAudioOffset", 0, -300, 300, data);
@@ -1033,19 +1033,19 @@ namespace Quaver.Shared.Config
             ResultGraph = ReadValue(@"ResultGraph", ResultGraphs.Deviance, data);
 
             // funny scroll stuff
-            PeakHeight4K = ReadInt(@"PeakHeight4K", 75, 0, 100, data);
-            LongNoteAlpha4K = ReadInt(@"LongNoteAlpha4K", 70, 0, 100, data);
-            StartingAlpha4K = ReadInt(@"StartingAlpha4K", 25, 0, 100, data);
+            PeakHeight4K = ReadInt(@"PeakHeight4K", 80, 0, 100, data);
+            LongNoteAlpha4K = ReadInt(@"LongNoteAlpha4K", 100, 0, 100, data);
+            StartingAlpha4K = ReadInt(@"StartingAlpha4K", 40, 0, 100, data);
             EndingAlpha4K = ReadInt(@"EndingAlpha4K", 100, 0, 100, data);
             AlphaTransitionEnd4K = ReadInt(@"AlphaTransitionEnd4K", 400, 0, 1000, data);
-            AlphaTransitionLength4K = ReadInt(@"AlphaTransitionLength4K", 200, 0, 1000, data);
+            AlphaTransitionLength4K = ReadInt(@"AlphaTransitionLength4K", 250, 0, 1000, data);
 
-            PeakHeight7K = ReadInt(@"PeakHeight7K", 75, 0, 100, data);
-            LongNoteAlpha7K = ReadInt(@"LongNoteAlpha7K", 70, 0, 100, data);
-            StartingAlpha7K = ReadInt(@"StartingAlpha7K", 25, 0, 100, data);
+            PeakHeight7K = ReadInt(@"PeakHeight7K", 80, 0, 100, data);
+            LongNoteAlpha7K = ReadInt(@"LongNoteAlpha7K", 100, 0, 100, data);
+            StartingAlpha7K = ReadInt(@"StartingAlpha7K", 40, 0, 100, data);
             EndingAlpha7K = ReadInt(@"EndingAlpha7K", 100, 0, 100, data);
             AlphaTransitionEnd7K = ReadInt(@"AlphaTransitionEnd7K", 400, 0, 1000, data);
-            AlphaTransitionLength7K = ReadInt(@"AlphaTransitionLength7K", 200, 0, 1000, data);
+            AlphaTransitionLength7K = ReadInt(@"AlphaTransitionLength7K", 250, 0, 1000, data);
 
             // Have to do this manually.
             if (string.IsNullOrEmpty(Username.Value))
