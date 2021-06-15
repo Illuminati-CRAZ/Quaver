@@ -885,7 +885,7 @@ namespace Quaver.Shared.Config
             ScrollDirection7K = ReadValue(@"ScrollDirection7K", ScrollDirection.Down, data);
             GlobalAudioOffset = ReadInt(@"GlobalAudioOffset", 0, -300, 300, data);
             Skin = ReadValue(@"Skin", "", data);
-            DefaultSkin = ReadValue(@"DefaultSkin", DefaultSkins.Bar, data);
+            DefaultSkin = ReadValue(@"DefaultSkin", DefaultSkins.Arrow, data);
             Pitched = ReadValue(@"Pitched", true, data);
             ScoreboardVisible = ReadValue(@"ScoreboardVisible", true, data);
             DisplayRankedAccuracy = ReadValue(@"DisplayRankedAccuracy", false, data);
