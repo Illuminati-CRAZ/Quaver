@@ -147,6 +147,18 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
         /// </summary>
         private DrawableReplayHit ReleaseHit { get; set; }
 
+        private float ScaleFactor { get; set; }
+
+        private float LongNoteAlpha { get; set; }
+
+        private float StartingAlpha { get; set; }
+
+        private float EndingAlpha { get; set; }
+
+        private int AlphaTransitionLength { get; set; }
+
+        private int AlphaTransitionEnd { get; set; }
+
         /// <inheritdoc />
         /// <summary>
         ///     Ctor -
@@ -162,6 +174,24 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             var playfield = (GameplayPlayfieldKeys)ruleset.Playfield;
 
             LongNoteSizeDifference = playfield.LongNoteSizeAdjustment[lane];
+
+            ScaleFactor = Ruleset.Mode == GameMode.Keys4 ? ConfigManager.PeakHeight4K.Value / 100f * 900 :
+                                                           ConfigManager.PeakHeight7K.Value / 100f * 900;
+
+            LongNoteAlpha = Ruleset.Mode == GameMode.Keys4 ? ConfigManager.LongNoteAlpha4K.Value / 100f :
+                                                             ConfigManager.LongNoteAlpha7K.Value / 100f;
+
+            StartingAlpha = Ruleset.Mode == GameMode.Keys4 ? ConfigManager.StartingAlpha4K.Value / 100f :
+                                                             ConfigManager.StartingAlpha7K.Value / 100f;
+
+            EndingAlpha = Ruleset.Mode == GameMode.Keys4 ? ConfigManager.EndingAlpha4K.Value / 100f :
+                                                           ConfigManager.EndingAlpha7K.Value / 100f;
+
+            AlphaTransitionLength = Ruleset.Mode == GameMode.Keys4 ? ConfigManager.AlphaTransitionLength4K.Value :
+                                                                     ConfigManager.AlphaTransitionLength7K.Value;
+
+            AlphaTransitionEnd = Ruleset.Mode == GameMode.Keys4 ? ConfigManager.AlphaTransitionEnd4K.Value :
+                                                                  ConfigManager.AlphaTransitionEnd7K.Value;
 
             InitializeSprites(ruleset, lane, playfield.ScrollDirections[lane]);
             InitializeObject(manager, info);
@@ -200,7 +230,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             LongNoteBodySprite = new AnimatableSprite(bodies)
             {
                 Alignment = Alignment.TopLeft,
-                Alpha = .7f,
+                Alpha = LongNoteAlpha,
                 Size = new ScalableVector2(laneSize , 0),
                 Position = new ScalableVector2(posX, 0),
                 Parent = playfield.Stage.HitObjectContainer
@@ -210,7 +240,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             LongNoteEndSprite = new Sprite()
             {
                 Alignment = Alignment.TopLeft,
-                Alpha = .7f,
+                Alpha = LongNoteAlpha,
                 Position = new ScalableVector2(posX, 0),
                 Size = new ScalableVector2(laneSize, 0),
                 Parent = playfield.Stage.HitObjectContainer
@@ -352,7 +382,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             ReleaseHit.Destroy();
         }
 
-        public static float Transform(float position) => (float)((Math.Pow(position / 768 * -1 - 1, 2) * -1 + 1) * 768 * -1);
+        public float Transform(float position) => (float)((Math.Pow(position / ScaleFactor * -1 - 1, 2) * -1 + 1) * ScaleFactor * -1);
 
         /// <summary>
         ///     Calculates the position of the Hit Object with a position offset.
@@ -379,7 +409,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             var earliestPosition = Math.Min(startPosition, EndTrackPosition);
             var latestPosition = Math.Max(startPosition, EndTrackPosition);
 
-            long peakPosition = startPosition + (long)(768 / HitObjectManagerKeys.ScrollSpeed * HitObjectManagerKeys.TrackRounding);
+            long peakPosition = startPosition + (long)(ScaleFactor / HitObjectManagerKeys.ScrollSpeed * HitObjectManagerKeys.TrackRounding);
 
             if (startPosition <= peakPosition && peakPosition <= latestPosition)
                 latestPosition = peakPosition;
@@ -403,16 +433,25 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             UpdateSpritePositions(offset, curTime);
         }
 
+        public void UpdateSpriteAlphas(double curTime)
+        {
+            float baseAlpha = (float)Math.Clamp(-1 * (EndingAlpha - StartingAlpha) / (AlphaTransitionLength)
+                                                   * (Info.StartTime - curTime - AlphaTransitionEnd)
+                                                   + EndingAlpha,
+
+                                                StartingAlpha, EndingAlpha);
+
+            HitObjectSprite.Alpha = baseAlpha;
+            LongNoteBodySprite.Alpha = baseAlpha * LongNoteAlpha;
+            LongNoteEndSprite.Alpha = baseAlpha * LongNoteAlpha;
+        }
+
         /// <summary>
         ///     Updates the HitObject sprite positions
         /// </summary>
         public void UpdateSpritePositions(long offset, double curTime)
         {
-            float baseAlpha = (float)Math.Clamp(-5 * ((Info.StartTime - curTime) / 1000 - .4) + 1, .5f, 1f);
-
-            HitObjectSprite.Alpha = baseAlpha;
-            LongNoteBodySprite.Alpha = baseAlpha * .7f;
-            LongNoteEndSprite.Alpha = baseAlpha * .7f;
+            UpdateSpriteAlphas(curTime);
 
             // Update Sprite position with regards to LN's state
             //

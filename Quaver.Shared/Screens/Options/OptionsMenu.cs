@@ -25,7 +25,7 @@ namespace Quaver.Shared.Screens.Options
     {
         /// <summary>
         /// </summary>
-        public static string LastOpenedSection { get; set; } = "Video";
+        public static string LastOpenedSection { get; set; } = "Quadratic Scroll";
 
         /// <summary>
         /// </summary>
@@ -114,6 +114,37 @@ namespace Quaver.Shared.Screens.Options
 
             Sections = new List<OptionsSection>
             {
+                new OptionsSection("Quadratic Scroll", UserInterface.OptionsGameplay, new List<OptionsSubcategory>
+                {
+                    new OptionsSubcategory("4K Scrolling", new List<OptionsItem>()
+                    {
+                        new OptionsItemScrollDirection(containerRect, "4K Scroll Direction", ConfigManager.ScrollDirection4K),
+                        new OptionsSlider(containerRect, "4K Scroll Speed", ConfigManager.ScrollSpeed4K, i => $"{i / 10f:0.0}"),
+                        new OptionsSlider(containerRect, "4K Peak Height", ConfigManager.PeakHeight4K)
+                    }),
+                    new OptionsSubcategory("4K Visibility", new List<OptionsItem>()
+                    {
+                        new OptionsSlider(containerRect, "4K Long Note Alpha", ConfigManager.LongNoteAlpha4K),
+                        new OptionsSlider(containerRect, "4K Start Alpha", ConfigManager.StartingAlpha4K),
+                        new OptionsSlider(containerRect, "4K End Alpha", ConfigManager.EndingAlpha4K),
+                        new OptionsSlider(containerRect, "4K Alpha Transition Length", ConfigManager.AlphaTransitionLength4K, i => $"{i} ms"),
+                        new OptionsSlider(containerRect, "4K Alpha Transition End", ConfigManager.AlphaTransitionEnd4K, i => $"{i} ms")
+                    }),
+                    new OptionsSubcategory("7K Scrolling", new List<OptionsItem>()
+                    {
+                        new OptionsItemScrollDirection(containerRect, "7K Scroll Direction", ConfigManager.ScrollDirection7K),
+                        new OptionsSlider(containerRect, "7K Scroll Speed", ConfigManager.ScrollSpeed7K, i => $"{i / 10f:0.0}"),
+                        new OptionsSlider(containerRect, "7K Peak Height", ConfigManager.PeakHeight7K)
+                    }),
+                    new OptionsSubcategory("7K Visibility", new List<OptionsItem>()
+                    {
+                        new OptionsSlider(containerRect, "7K Long Note Alpha", ConfigManager.LongNoteAlpha7K),
+                        new OptionsSlider(containerRect, "7K Start Alpha", ConfigManager.StartingAlpha7K),
+                        new OptionsSlider(containerRect, "7K End Alpha", ConfigManager.EndingAlpha7K),
+                        new OptionsSlider(containerRect, "7K Alpha Transition Length", ConfigManager.AlphaTransitionLength7K, i => $"{i} ms"),
+                        new OptionsSlider(containerRect, "7K Alpha Transition End", ConfigManager.AlphaTransitionEnd7K, i => $"{i} ms")
+                    })
+                }),
                 new OptionsSection("Video", UserInterface.OptionsVideo, new List<OptionsSubcategory>
                 {
                     new OptionsSubcategory("Window", new List<OptionsItem>()

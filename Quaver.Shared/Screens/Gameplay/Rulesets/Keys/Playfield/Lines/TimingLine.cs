@@ -6,6 +6,7 @@
 */
 
 using System;
+using Quaver.API.Enums;
 using Quaver.Shared.Config;
 using Quaver.Shared.Database.Maps;
 using Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects;
@@ -42,6 +43,8 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         /// </summary>
         private ScrollDirection ScrollDirection { get; set; }
 
+        private float ScaleFactor { get; set; }
+
         /// <inheritdoc />
         /// <summary>
         ///     Creates and initializes a new Timing Line Object
@@ -56,6 +59,9 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             Info = info;
             ScrollDirection = direction;
 
+            ScaleFactor = ruleset.Mode == GameMode.Keys4 ? ConfigManager.PeakHeight4K.Value / 100f * 900 :
+                                                           ConfigManager.PeakHeight7K.Value / 100f * 900;
+
             // Initialize Sprite
             Alignment = Alignment.TopLeft;
             Width = size;
@@ -65,7 +71,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             Tint = SkinManager.Skin.Keys[MapManager.Selected.Value.Mode].TimingLineColor;
         }
 
-        public static float Transform(float position) => (float)((Math.Pow(position / 768 * -1 - 1, 2) * -1 + 1) * 768 * -1);
+        public float Transform(float position) => (float)((Math.Pow(position / ScaleFactor * -1 - 1, 2) * -1 + 1) * ScaleFactor * -1);
 
         /// <summary>
         ///     Update the current Timing Line Sprite position

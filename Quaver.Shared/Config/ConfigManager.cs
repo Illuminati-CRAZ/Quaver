@@ -748,6 +748,21 @@ namespace Quaver.Shared.Config
         /// </summary>
         internal static Bindable<ResultGraphs> ResultGraph { get; private set; }
 
+        // funny scroll config stuff
+        internal static BindableInt PeakHeight4K { get; private set; } // % of screen height?
+        internal static BindableInt LongNoteAlpha4K { get; private set; } // %
+        internal static BindableInt StartingAlpha4K { get; private set; } // %
+        internal static BindableInt EndingAlpha4K { get; private set; } // %
+        internal static BindableInt AlphaTransitionEnd4K { get; private set; } // relative ms
+        internal static BindableInt AlphaTransitionLength4K { get; private set; } // ms
+
+        internal static BindableInt PeakHeight7K { get; private set; } // % of screen height
+        internal static BindableInt LongNoteAlpha7K { get; private set; } // %
+        internal static BindableInt StartingAlpha7K { get; private set; } // %
+        internal static BindableInt EndingAlpha7K { get; private set; } // %
+        internal static BindableInt AlphaTransitionEnd7K { get; private set; } // relative ms
+        internal static BindableInt AlphaTransitionLength7K { get; private set; } // ms
+
         /// <summary>
         ///     Dictates whether or not this is the first write of the file for the current game session.
         ///     (Not saved in Config)
@@ -1016,6 +1031,21 @@ namespace Quaver.Shared.Config
             DisplayNotificationsInGameplay = ReadValue(@"DisplayNotificationsInGameplay", false, data);
             TournamentPlayer2Skin = ReadValue(@"TournamentPlayer2Skin", "", data);
             ResultGraph = ReadValue(@"ResultGraph", ResultGraphs.Deviance, data);
+
+            // funny scroll stuff
+            PeakHeight4K = ReadInt(@"PeakHeight4K", 75, 0, 100, data);
+            LongNoteAlpha4K = ReadInt(@"LongNoteAlpha4K", 70, 0, 100, data);
+            StartingAlpha4K = ReadInt(@"StartingAlpha4K", 25, 0, 100, data);
+            EndingAlpha4K = ReadInt(@"EndingAlpha4K", 100, 0, 100, data);
+            AlphaTransitionEnd4K = ReadInt(@"AlphaTransitionEnd4K", 400, 0, 1000, data);
+            AlphaTransitionLength4K = ReadInt(@"AlphaTransitionLength4K", 200, 0, 1000, data);
+
+            PeakHeight7K = ReadInt(@"PeakHeight7K", 75, 0, 100, data);
+            LongNoteAlpha7K = ReadInt(@"LongNoteAlpha7K", 70, 0, 100, data);
+            StartingAlpha7K = ReadInt(@"StartingAlpha7K", 25, 0, 100, data);
+            EndingAlpha7K = ReadInt(@"EndingAlpha7K", 100, 0, 100, data);
+            AlphaTransitionEnd7K = ReadInt(@"AlphaTransitionEnd7K", 400, 0, 1000, data);
+            AlphaTransitionLength7K = ReadInt(@"AlphaTransitionLength7K", 200, 0, 1000, data);
 
             // Have to do this manually.
             if (string.IsNullOrEmpty(Username.Value))
