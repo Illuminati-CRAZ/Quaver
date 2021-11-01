@@ -69,6 +69,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Menu
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(12, 4));
             ImGui.PushStyleColor(ImGuiCol.FrameBg, new Vector4(0, 0, 24, 0));
             ImGui.PushStyleColor(ImGuiCol.WindowBg, new Vector4(0, 0, 24, 0));
+            ImGui.ShowDemoWindow();
 
             if (!ImGui.BeginMainMenuBar())
                 return;
@@ -556,7 +557,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Menu
 
                     if (!ImGui.BeginMenu(plugin.Name))
                         continue;
-                    
+
                     if (ImGui.MenuItem("Enabled", plugin.Author, plugin.IsActive))
                     {
                         plugin.IsActive = !plugin.IsActive;
@@ -702,7 +703,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Menu
         /// <returns></returns>
         public static ImGuiOptions GetOptions() => new ImGuiOptions(new List<ImGuiFont>
         {
-            new ImGuiFont($@"{WobbleGame.WorkingDirectory}/Fonts/lato-black.ttf", 14),
+            new ImGuiFont($@"{WobbleGame.WorkingDirectory}/Fonts/lato-black.ttf", 14 * 2),
         }, false);
     }
 }
