@@ -225,8 +225,7 @@ namespace Quaver.Shared.Screens.Gameplay
                 if (Map.HitObjects.Count == 0)
                     return false;
 
-                return Map.HitObjects.First().StartTime - Ruleset.Screen.Timing.Time >=
-                       GameplayAudioTiming.StartDelay + 5000;
+                return Map.HitObjects.First().StartTime - Ruleset.Screen.Timing.Time >= GameplayAudioTiming.StartDelay + 5000;
             }
         }
 
@@ -248,7 +247,12 @@ namespace Quaver.Shared.Screens.Gameplay
         /// <summary>
         ///     The time the score began.
         /// </summary>
-        public long TimePlayed { get; }
+        public long TimePlayed { get; private set; }
+
+        /// <summary>
+        ///     The time the score ended.
+        /// </summary>
+        public long TimePlayEnd { get; set; }
 
         /// <summary>
         ///     If the user is currently calibrating their offset.
@@ -367,9 +371,6 @@ namespace Quaver.Shared.Screens.Gameplay
             bool isCalibratingOffset = false, SpectatorClient spectatorClient = null, TournamentPlayerOptions options = null, bool isSongSelectPreview = false,
             bool isTestPlayingInNewEditor = false)
         {
-            TimePlayed = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            UpdateMapInDatabase();
-
             if (isPlayTesting && !isSongSelectPreview)
             {
                 var testingQua = ObjectHelper.DeepClone(map);
@@ -441,6 +442,7 @@ namespace Quaver.Shared.Screens.Gameplay
             // Create the current replay that will be captured.
             ReplayCapturer = new ReplayCapturer(this);
 
+            UpdateMapInDatabase();
             SetRuleset();
             SetRichPresence();
 
@@ -473,6 +475,11 @@ namespace Quaver.Shared.Screens.Gameplay
 
             if (OnlineManager.IsBeingSpectated && !InReplayMode)
                 OnlineManager.Client?.SendReplaySpectatorFrames(SpectatorClientStatus.NewSong, AudioEngine.Track.Time, new List<ReplayFrame>());
+
+            TimePlayed = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            if (ReplayCapturer != null)
+                ReplayCapturer.Replay.TimePlayed = TimePlayed;
 
             base.OnFirstUpdate();
         }
@@ -594,7 +601,7 @@ namespace Quaver.Shared.Screens.Gameplay
 
             if (!IsPlayComplete && !IsCalibratingOffset)
             {
-                if (KeyboardManager.IsUniqueKeyPress(ConfigManager.KeySkipIntro.Value))
+                if (GenericKeyManager.IsUniquePress(ConfigManager.KeySkipIntro.Value))
                 {
                     SkipToNextObject();
                 }
@@ -651,7 +658,7 @@ namespace Quaver.Shared.Screens.Gameplay
                 return;
 
             // If the pause key is not pressed...
-            if (KeyboardManager.CurrentState.IsKeyUp(ConfigManager.KeyPause.Value))
+            if (GenericKeyManager.IsUp(ConfigManager.KeyPause.Value))
             {
                 if (Failed || IsPlayComplete || IsPaused)
                     return;
@@ -668,7 +675,7 @@ namespace Quaver.Shared.Screens.Gameplay
             }
 
             // If the pause key was just pressed...
-            if (KeyboardManager.IsUniqueKeyPress(ConfigManager.KeyPause.Value))
+            if (GenericKeyManager.IsUniquePress(ConfigManager.KeyPause.Value))
             {
                 // Go back to editor if we're currently play testing.
                 if (IsPlayTesting)
@@ -762,13 +769,12 @@ namespace Quaver.Shared.Screens.Gameplay
                     return;
                 }
 
-                // Show notification to the user that their score is invalid.
-                NotificationManager.Show(NotificationLevel.Warning,
-                    "WARNING! Your score will not be submitted due to pausing during gameplay!", null, true);
-
                 // Add the pause mod to their score.
-                if (!ModManager.IsActivated(ModIdentifier.Paused))
+                if (!ModManager.IsActivated(ModIdentifier.Paused) && Ruleset.ScoreProcessor.TotalJudgementCount > 0)
                 {
+                    NotificationManager.Show(NotificationLevel.Warning, "WARNING! Your score will not be submitted due to pausing " +
+                                                                        "during gameplay!", null, true);
+
                     ModManager.AddMod(ModIdentifier.Paused);
                     ReplayCapturer.Replay.Mods |= ModIdentifier.Paused;
                     Ruleset.ScoreProcessor.Mods |= ModIdentifier.Paused;
@@ -1057,7 +1063,9 @@ namespace Quaver.Shared.Screens.Gameplay
 
                 OnlineManager.Client?.RequestToSkipSong();
                 RequestedToSkipSong = true;
+
                 NotificationManager.Show(NotificationLevel.Info, "Requested to skip song. Waiting for all other players to skip!", null, true);
+
                 return;
             }
 
@@ -1151,6 +1159,9 @@ namespace Quaver.Shared.Screens.Gameplay
             DiscordHelper.Presence.SmallImageKey = ModeHelper.ToShortHand(Ruleset.Mode).ToLower();
             DiscordHelper.Presence.SmallImageText = ModeHelper.ToLongHand(Ruleset.Mode);
             DiscordRpc.UpdatePresence(ref DiscordHelper.Presence);
+
+            SteamManager.SetRichPresence("State", DiscordHelper.Presence.State);
+            SteamManager.SetRichPresence("Details", Map.ToString());
         }
 
         /// <inheritdoc />
@@ -1402,7 +1413,7 @@ namespace Quaver.Shared.Screens.Gameplay
         {
             if (IsSongSelectPreview)
                 return;
-            
+
             var map = MapManager.Selected.Value;
 
             map.TimesPlayed++;

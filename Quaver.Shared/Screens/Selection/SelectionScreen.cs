@@ -84,6 +84,11 @@ namespace Quaver.Shared.Screens.Selection
         private Random Rng { get; } = new Random();
 
         /// <summary>
+        ///     Contains the currently history of the random maps
+        /// </summary>
+        public Stack<Map> RngHistory { get; set; } = new Stack<Map>();
+
+        /// <summary>
         ///     Invoked when a random mapset has been selected
         /// </summary>
         public static event EventHandler<RandomMapsetSelectedEventArgs> RandomMapsetSelected;
@@ -270,33 +275,7 @@ namespace Quaver.Shared.Screens.Selection
             if (!KeyboardManager.IsUniqueKeyPress(Keys.Escape))
                 return;
 
-            switch (ActiveLeftPanel.Value)
-            {
-                case SelectContainerPanel.Leaderboard:
-                case SelectContainerPanel.MapPreview:
-                    if (ActiveScrollContainer.Value == SelectScrollContainerType.Maps)
-                    {
-                        ActiveScrollContainer.Value = SelectScrollContainerType.Mapsets;
-                        return;
-                    }
-
-                    if (ActiveScrollContainer.Value == SelectScrollContainerType.Mapsets &&
-                        ConfigManager.SelectGroupMapsetsBy.Value == GroupMapsetsBy.Playlists)
-                    {
-                        ActiveScrollContainer.Value = SelectScrollContainerType.Playlists;
-                        return;
-                    }
-
-                    if (ActiveLeftPanel.Value == SelectContainerPanel.Leaderboard)
-                        ExitToMenu();
-
-                    if (ActiveLeftPanel.Value == SelectContainerPanel.MapPreview)
-                        ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
-                    break;
-                default:
-                    ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
-                    break;
-            }
+            HandleBackAction();
         }
 
         /// <summary>
@@ -321,7 +300,10 @@ namespace Quaver.Shared.Screens.Selection
             if (!KeyboardManager.IsUniqueKeyPress(Keys.F2))
                 return;
 
-            SelectRandomMap();
+            if (KeyboardManager.IsShiftDown())
+                SelectPrevRandomMap();
+            else
+                SelectRandomMap();
         }
 
         /// <summary>
@@ -488,6 +470,40 @@ namespace Quaver.Shared.Screens.Selection
         }
 
         /// <summary>
+        ///     Handles the back button action
+        /// </summary>
+        public void HandleBackAction()
+        {
+            switch (ActiveLeftPanel.Value)
+            {
+                case SelectContainerPanel.Leaderboard:
+                case SelectContainerPanel.MapPreview:
+                    if (ActiveScrollContainer.Value == SelectScrollContainerType.Maps)
+                    {
+                        ActiveScrollContainer.Value = SelectScrollContainerType.Mapsets;
+                        return;
+                    }
+
+                    if (ActiveScrollContainer.Value == SelectScrollContainerType.Mapsets &&
+                        ConfigManager.SelectGroupMapsetsBy.Value == GroupMapsetsBy.Playlists)
+                    {
+                        ActiveScrollContainer.Value = SelectScrollContainerType.Playlists;
+                        return;
+                    }
+
+                    if (ActiveLeftPanel.Value == SelectContainerPanel.Leaderboard)
+                        ExitToMenu();
+
+                    if (ActiveLeftPanel.Value == SelectContainerPanel.MapPreview)
+                        ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+                    break;
+                default:
+                    ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+                    break;
+            }
+        }
+
+        /// <summary>
         ///     Gets the adjacent rate value.
         ///
         ///     For example, if the current rate is 1.0x, the adjacent value would be either 0.95x or 1.1x,
@@ -567,6 +583,34 @@ namespace Quaver.Shared.Screens.Selection
         }
 
         /// <summary>
+        ///     Undoes the random map choice
+        /// </summary>
+        public void SelectPrevRandomMap()
+        {
+            if (AvailableMapsets.Value.Count == 0)
+                return;
+
+            if (RngHistory.Count == 0)
+                return;
+
+            var map = RngHistory.Pop();
+            var index = AvailableMapsets.Value.FindIndex(0, AvailableMapsets.Value.Count, x => x.Maps.Contains(map));
+
+            while (index == -1)
+            {
+                if (RngHistory.Count == 0)
+                    return;
+
+                map = RngHistory.Pop();
+                index = AvailableMapsets.Value.FindIndex(0, AvailableMapsets.Value.Count, x => x.Maps.Contains(map));
+            }
+
+            MapManager.Selected.Value = map;
+            RandomMapsetSelected?.Invoke(this, new RandomMapsetSelectedEventArgs(map.Mapset, index));
+
+        }
+
+        /// <summary>
         ///     Selects a random map
         /// </summary>
         public void SelectRandomMap()
@@ -579,6 +623,7 @@ namespace Quaver.Shared.Screens.Selection
             var index = Rng.Next(AvailableMapsets.Value.Count);
             var mapIndex = Rng.Next(AvailableMapsets.Value[index].Maps.Count);
 
+            RngHistory.Push(MapManager.Selected.Value);
             MapManager.Selected.Value = AvailableMapsets.Value[index].Maps[mapIndex];
             RandomMapsetSelected?.Invoke(this, new RandomMapsetSelectedEventArgs(AvailableMapsets.Value[index], index));
         }
@@ -813,8 +858,6 @@ namespace Quaver.Shared.Screens.Selection
         /// </summary>
         private void SetRichPresence()
         {
-            DiscordHelper.Presence.Details = "Selecting a song";
-            DiscordHelper.Presence.State = "In the menus";
             DiscordHelper.Presence.PartySize = 0;
             DiscordHelper.Presence.PartyMax = 0;
             DiscordHelper.Presence.StartTimestamp = 0;
@@ -822,7 +865,8 @@ namespace Quaver.Shared.Screens.Selection
             DiscordHelper.Presence.LargeImageText = OnlineManager.GetRichPresenceLargeKeyText(ConfigManager.SelectedGameMode.Value);
             DiscordHelper.Presence.SmallImageKey = ModeHelper.ToShortHand(ConfigManager.SelectedGameMode.Value).ToLower();
             DiscordHelper.Presence.SmallImageText = ModeHelper.ToLongHand(ConfigManager.SelectedGameMode.Value);
-            DiscordRpc.UpdatePresence(ref DiscordHelper.Presence);
+
+            Helpers.RichPresenceHelper.UpdateRichPresence("In the menus", "Selecting a song");
         }
 
         /// <summary>

@@ -89,7 +89,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Input
                     inputLane--;
 
                 // A key was uniquely pressed.
-                if (!BindingStore[lane].Pressed && (KeyboardManager.IsUniqueKeyPress(BindingStore[lane].Key.Value) &&
+                if (!BindingStore[lane].Pressed && (GenericKeyManager.IsUniquePress(BindingStore[lane].Key.Value) &&
                                                     !Ruleset.Screen.InReplayMode || Ruleset.Screen.InReplayMode && ReplayInputManager.UniquePresses[lane]))
                 {
                     // Update Replay Manager. Reset UniquePresses value for this lane.
@@ -104,7 +104,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Input
                     screenView.KpsDisplay.AddClick();
                 }
                 // A key was uniquely released.
-                else if (BindingStore[lane].Pressed && (KeyboardManager.IsUniqueKeyRelease(BindingStore[lane].Key.Value) &&
+                else if (BindingStore[lane].Pressed && (GenericKeyManager.IsUniqueRelease(BindingStore[lane].Key.Value) &&
                                                         !Ruleset.Screen.InReplayMode
                                                     || Ruleset.Screen.InReplayMode && ReplayInputManager.UniqueReleases[lane]))
                 {
@@ -295,6 +295,10 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Input
                     playfield.Stage.HitError.AddJudgement(judgement, gameplayHitObject.Info.EndTime - time);
                     playfield.Stage.JudgementHitBurst.PerformJudgementAnimation(judgement);
                 }
+
+                // play hitlighting animation on release
+                if (gameplayHitObject.Info.IsLongNote)
+                    playfield.Stage.HitLightingObjects[lane].PerformHitAnimation(false, judgement);
 
                 // If the player recieved an early miss or "okay",
                 // show the player that they were inaccurate by killing the object instead of recycling it

@@ -511,13 +511,13 @@ namespace Quaver.Shared.Screens.Results
             if (OnlineManager.IsSpectatingSomeone)
                 return;
 
+            if (OnlineManager.CurrentGame != null)
+                return;
+
             switch (ScreenType)
             {
                 case ResultsScreenType.Gameplay:
-                    if (Gameplay.InReplayMode)
-                        WatchReplay();
-                    else
-                        RetryMap();
+                    RetryMap();
                     break;
                 case ResultsScreenType.Replay:
                     WatchReplay();
@@ -688,11 +688,8 @@ namespace Quaver.Shared.Screens.Results
                 OnlineManager.Client.OnScoreSubmitted += OnScoreSubmitted;
             }
 
-            ThreadScheduler.Run(() =>
-            {
-                SubmitLocalScore(screen, replay);
-                IsSubmittingScore.Value = SubmitOnlineScore(screen, replay);
-            });
+            ThreadScheduler.Run(() => SubmitLocalScore(screen, replay));
+            ThreadScheduler.Run(() => IsSubmittingScore.Value = SubmitOnlineScore(screen, replay));
         }
 
         /// <summary>
@@ -715,12 +712,12 @@ namespace Quaver.Shared.Screens.Results
             // Calculate performance rating
             score.DifficultyProcessorVersion = DifficultyProcessorKeys.Version;
             score.RatingProcessorVersion = RatingProcessorKeys.Version;
-            score.PerformanceRating = processor.Failed ? 0 : new RatingProcessorKeys(Map.DifficultyFromMods(processor.Mods)).CalculateRating(rankedAccuracy);
+            score.PerformanceRating = processor.Failed ? 0 : new RatingProcessorKeys(screen.Map.SolveDifficulty(processor.Mods).OverallDifficulty).CalculateRating(rankedAccuracy);
             score.RankedAccuracy = rankedAccuracy;
 
             // Select proper local profile id to attach with this score for ranking
             if (UserProfileDatabaseCache.Selected.Value.Id != 0 && !UserProfileDatabaseCache.Selected.Value.IsOnline)
-                score.UserProfileId = UserProfileDatabaseCache.Selected.Value.Id;
+                score.LocalProfileId = UserProfileDatabaseCache.Selected.Value.Id;
 
             var scoreId = -1;
 
@@ -873,8 +870,7 @@ namespace Quaver.Shared.Screens.Results
 
             // Submit score to the server...
             OnlineManager.Client?.Submit(new OnlineScore(submissionMd5, replay, processor, scrollSpeed,
-                ModHelper.GetRateFromMods(ModManager.Mods), TimeHelper.GetUnixTimestampMilliseconds(),
-                SteamManager.PTicket, OnlineManager.CurrentGame));
+                ModHelper.GetRateFromMods(ModManager.Mods), Gameplay.TimePlayEnd, OnlineManager.CurrentGame));
 
             return true;
         }
@@ -885,6 +881,10 @@ namespace Quaver.Shared.Screens.Results
         /// <param name="e"></param>
         private void OnScoreSubmitted(object sender, ScoreSubmissionEventArgs e)
         {
+            // Hasn't submitted successfully yet.
+            if (e.Response == null)
+                return;
+
             IsSubmittingScore.Value = false;
             ScoreSubmissionStats.Value = e.Response;
             Logger.Important($"Received score submission response with status: {e.Response.Status}", LogType.Network);
@@ -936,8 +936,6 @@ namespace Quaver.Shared.Screens.Results
         {
             try
             {
-                DiscordHelper.Presence.Details = "Results Screen";
-                DiscordHelper.Presence.State = "In the menus";
                 DiscordHelper.Presence.PartySize = 0;
                 DiscordHelper.Presence.PartyMax = 0;
                 DiscordHelper.Presence.StartTimestamp = 0;
@@ -945,7 +943,8 @@ namespace Quaver.Shared.Screens.Results
                 DiscordHelper.Presence.LargeImageText = OnlineManager.GetRichPresenceLargeKeyText(ConfigManager.SelectedGameMode.Value);
                 DiscordHelper.Presence.SmallImageKey = ModeHelper.ToShortHand(ConfigManager.SelectedGameMode.Value).ToLower();
                 DiscordHelper.Presence.SmallImageText = ModeHelper.ToLongHand(ConfigManager.SelectedGameMode.Value);
-                DiscordRpc.UpdatePresence(ref DiscordHelper.Presence);
+
+                RichPresenceHelper.UpdateRichPresence("In the Menus", "Results Screen");
             }
             catch (Exception e)
             {

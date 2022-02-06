@@ -21,11 +21,13 @@ namespace Quaver.Shared.Modifiers.Mods
 
         public string Description { get; set; } = "Hate scroll speed changes? Say no more.";
 
-        public bool Ranked() => false;
+        public bool Ranked() => true;
 
         public bool AllowedInMultiplayer { get; set; } = true;
 
         public bool OnlyMultiplayerHostCanCanChange { get; set; }
+
+        public bool ChangesMapObjects { get; set; }
 
         public ModIdentifier[] IncompatibleMods { get; set; } = { };
 
