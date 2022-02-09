@@ -10,6 +10,7 @@ using Quaver.Shared.Database.Maps;
 using Quaver.Shared.Helpers;
 using Quaver.Shared.Screens.Results.UI.Header.Contents.Tabs;
 using Quaver.Shared.Screens.Results.UI.Tabs.Multiplayer.Table.Scrolling;
+using Quaver.Shared.Skinning;
 using Wobble.Assets;
 using Wobble.Bindables;
 using Wobble.Graphics;
@@ -77,11 +78,11 @@ namespace Quaver.Shared.Screens.Results.UI.Tabs.Multiplayer.Table
             {
                 case MultiplayerGameRuleset.Free_For_All:
                 case MultiplayerGameRuleset.Battle_Royale:
-                    Image = UserInterface.ResultsMultiplayerFFAPanel;
+                    Image = SkinManager.Skin?.Results?.ResultsMultiplayerFFAPanel ?? UserInterface.ResultsMultiplayerFFAPanel;
                     Height = Image.Height + 4;
                     break;
                 case MultiplayerGameRuleset.Team:
-                    Image = UserInterface.ResultsMultiplayerTeamPanel;
+                    Image = SkinManager.Skin?.Results?.ResultsMultiplayerTeamPanel ?? UserInterface.ResultsMultiplayerTeamPanel;
                     Height = Image.Height;
                     break;
                 default:
@@ -189,15 +190,17 @@ namespace Quaver.Shared.Screens.Results.UI.Tabs.Multiplayer.Table
             var players = new List<ScoreProcessor>(Team1Players);
             players = players.Concat(Team2Players).ToList();
 
+            var qua = Map.LoadQua();
+
             switch (Game.Ruleset)
             {
                 case MultiplayerGameRuleset.Battle_Royale:
                 case MultiplayerGameRuleset.Free_For_All:
-                    players = players.OrderByDescending(x => new RatingProcessorKeys(Map.DifficultyFromMods(x.Mods)).CalculateRating(x)).ToList();
+                    players = players.OrderByDescending(x => new RatingProcessorKeys(qua.SolveDifficulty(x.Mods, true).OverallDifficulty).CalculateRating(x)).ToList();
                     break;
                 case MultiplayerGameRuleset.Team:
                     players = players.OrderByDescending(x => GetTeamFromScoreProcessor(Game, x))
-                        .ThenByDescending(x => new RatingProcessorKeys(Map.DifficultyFromMods(x.Mods)).CalculateRating(x)).ToList();
+                        .ThenByDescending(x => new RatingProcessorKeys(qua.SolveDifficulty(x.Mods, true).OverallDifficulty).CalculateRating(x)).ToList();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

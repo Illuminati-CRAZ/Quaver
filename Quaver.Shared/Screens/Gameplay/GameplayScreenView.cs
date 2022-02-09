@@ -17,6 +17,7 @@ using Quaver.API.Maps.Processors.Scoring.Data;
 using Quaver.API.Replays;
 using Quaver.Server.Client.Handlers;
 using Quaver.Server.Common.Enums;
+using Quaver.Server.Common.Helpers;
 using Quaver.Server.Common.Objects.Multiplayer;
 using Quaver.Shared.Assets;
 using Quaver.Shared.Audio;
@@ -215,7 +216,7 @@ namespace Quaver.Shared.Screens.Gameplay
         public GameplayScreenView(Screen screen) : base(screen)
         {
             Screen = (GameplayScreen)screen;
-            RatingProcessor = new RatingProcessorKeys(MapManager.Selected.Value.DifficultyFromMods(Screen.Ruleset.ScoreProcessor.Mods));
+            RatingProcessor = new RatingProcessorKeys(Screen.Map.SolveDifficulty(ModManager.Mods, true).OverallDifficulty);
 
             CreateBackground();
 
@@ -512,7 +513,7 @@ namespace Quaver.Shared.Screens.Gameplay
                 : UserInterface.UnknownAvatar;
 
             SelfScoreboard = new ScoreboardUser(Screen, ScoreboardUserType.Self, scoreboardName, null, selfAvatar,
-                ModManager.Mods)
+                ModManager.Mods, null, RatingProcessor)
             {
                 Parent = Container,
                 Alignment = Alignment.MidLeft
@@ -731,6 +732,8 @@ namespace Quaver.Shared.Screens.Gameplay
 
             if (!ResultsScreenLoadInitiated)
             {
+                Screen.TimePlayEnd = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
                 // Force all replay frames on failure
                 if (OnlineManager.IsBeingSpectated)
                 {
@@ -795,6 +798,12 @@ namespace Quaver.Shared.Screens.Gameplay
                             ModManager.RemoveMod(ModIdentifier.Paused);
 
                         return new SelectionScreen();
+                    }
+
+                    if (Screen.InReplayMode && Screen.LoadedReplay != null)
+                    {
+                        Screen.LoadedReplay.FromScoreProcessor(Screen.Ruleset.ScoreProcessor);
+                        return new ResultsScreen(MapManager.Selected.Value, Screen.LoadedReplay);
                     }
 
                     return new ResultsScreen(Screen);

@@ -165,15 +165,15 @@ namespace Quaver.Shared.Screens.Editor
 
             MapManager.Selected.Value.Qua = WorkingMap;
 
-            // Discord Rich Presence
-            DiscordHelper.Presence.Details = WorkingMap.ToString();
-            DiscordHelper.Presence.State = "Editing";
+            // Discord Rich Presence specific stuff
             DiscordHelper.Presence.StartTimestamp = (long) (TimeHelper.GetUnixTimestampMilliseconds() / 1000);
             DiscordHelper.Presence.EndTimestamp = 0;
             DiscordHelper.Presence.LargeImageText = OnlineManager.GetRichPresenceLargeKeyText(ConfigManager.SelectedGameMode.Value);
             DiscordHelper.Presence.SmallImageKey = ModeHelper.ToShortHand(WorkingMap.Mode).ToLower();
             DiscordHelper.Presence.SmallImageText = ModeHelper.ToLongHand(WorkingMap.Mode);
-            DiscordRpc.UpdatePresence(ref DiscordHelper.Presence);
+
+            // Steam + Discord Rich Presence
+            RichPresenceHelper.UpdateRichPresence("Editing", WorkingMap.ToString());
 
             ActiveLayerInterface = new Bindable<EditorLayerInterface>(EditorLayerInterface.Composition) { Value = EditorLayerInterface.Composition };
 
@@ -846,7 +846,7 @@ namespace Quaver.Shared.Screens.Editor
             // Add the new map to the db.
             var map = Map.FromQua(qua, path);
             map.DateAdded = DateTime.Now;
-            map.Id = MapDatabaseCache.InsertMap(map, path);
+            map.Id = MapDatabaseCache.InsertMap(map);
 
             // Reload the mapsets
             MapDatabaseCache.OrderAndSetMapsets();
@@ -912,7 +912,7 @@ namespace Quaver.Shared.Screens.Editor
 
                 // Place the new map inside of the database and make sure all the loaded maps are correct
                 var map = Map.FromQua(qua, path);
-                map.Id = MapDatabaseCache.InsertMap(map, path);
+                map.Id = MapDatabaseCache.InsertMap(map);
                 MapDatabaseCache.OrderAndSetMapsets();
 
                 MapManager.Selected.Value = map;

@@ -68,15 +68,20 @@ namespace Quaver.Shared.Database.Maps
                 {
                     try
                     {
+                        var folderPath = "";
+
                         switch (map.Game)
                         {
                             case MapGame.Quaver:
-                                var path = $"{ConfigManager.SongDirectory.Value}/{map.Directory}/{map.Path}";
-                                File.Copy(path, $"{tempFolder}/{map.Path}");
+                                folderPath = $"{ConfigManager.SongDirectory.Value}/{map.Directory}";
+                                var path = $"{folderPath}/{map.Path}";
+
+                                File.Copy(path, $"{tempFolder}/{map.Path}", true);
                                 break;
                             // Map is from osu!, so we need to convert it to .qua format
                             case MapGame.Osu:
-                                var osuPath = $"{MapManager.OsuSongsFolder}{map.Directory}/{map.Path}";
+                                folderPath = $"{MapManager.OsuSongsFolder}{map.Directory}";
+                                var osuPath = $"{folderPath}/{map.Path}";
 
                                 var osu = new OsuBeatmap(osuPath);
                                 map.BackgroundPath = osu.Background;
@@ -89,7 +94,9 @@ namespace Quaver.Shared.Database.Maps
                                 Logger.Debug($"Successfully converted osu beatmap: {osuPath}", LogType.Runtime);
                                 break;
                             case MapGame.Etterna:
+                                folderPath = Path.GetDirectoryName(map.Path);
                                 var stepFile = new StepFile(map.Path);
+
                                 var fileName = StringHelper.FileNameSafeString($"{map.Artist} - {map.Title} [{map.DifficultyName}].qua");
                                 var fileSavePath = $"{tempFolder}/{fileName}";
                                 stepFile.ToQuas().Find(x => x.DifficultyName == map.DifficultyName).Save(fileSavePath);
@@ -98,21 +105,25 @@ namespace Quaver.Shared.Database.Maps
                                 break;
                         }
 
-                        // Copy over audio file if necessary
-                        var audioPath = map.Game != MapGame.Etterna ?
-                            $"{tempFolder}/{map.AudioPath}" :
-                            $"{tempFolder}/{Path.GetFileName(map.AudioPath)}";
-
-                        if (File.Exists(MapManager.GetAudioPath(map)) && !File.Exists(audioPath))
-                            File.Copy(MapManager.GetAudioPath(map), audioPath);
-
-                        // Copy over background file if necessary
-                        var bgPath = map.Game != MapGame.Etterna ?
-                            $"{tempFolder}/{map.BackgroundPath}" :
-                            $"{tempFolder}/{Path.GetFileName(map.BackgroundPath)}";
-
-                        if (File.Exists(MapManager.GetBackgroundPath(map)) && !File.Exists(bgPath))
-                            File.Copy(MapManager.GetBackgroundPath(map), bgPath);
+                        // Copy each non-map file in the directory. Handles things like audio files, backgrounds, etc.
+                        foreach (var file in System.IO.Directory.GetFiles(folderPath))
+                        {
+                            switch (Path.GetExtension(file).ToLower())
+                            {
+                                // This list matches the extensions allowed by the server. If any other file is included,
+                                // the server will reject attempts to upload the map.
+                                case ".mp3":
+                                case ".ogg":
+                                case ".png":
+                                case ".jpg":
+                                case ".jpeg":
+                                case ".wav":
+                                    File.Copy(file, $"{tempFolder}/{Path.GetFileName(file)}", true);
+                                    break;
+                                default:
+                                    continue;
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
