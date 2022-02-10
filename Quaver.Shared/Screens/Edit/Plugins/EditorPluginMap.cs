@@ -76,6 +76,7 @@ namespace Quaver.Shared.Screens.Edit.Plugins
             EditorLayers = Map.EditorLayers;
             TrackLength = Track.Length;
             Normalized = Map.BPMDoesNotAffectScrollVelocity;
+            InitialScrollVelocity = Map.InitialScrollVelocity;
         }
 
         public override string ToString() => Map.ToString();
