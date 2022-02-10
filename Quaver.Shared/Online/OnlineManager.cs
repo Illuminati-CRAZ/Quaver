@@ -200,12 +200,6 @@ namespace Quaver.Shared.Online
 
             Logger.Important($"Attempting to log into the Quaver server...", LogType.Network);
 
-            if (!SteamManager.AuthSessionTicketValidated)
-            {
-                Logger.Error($"Could not log in because the steam auth session ticket was not validated.", LogType.Network);
-                throw new Exception("Failed to login");
-            }
-
             // Create the new online client and subscribe to all of its online events.
             if (Client == null)
             {
@@ -236,8 +230,7 @@ namespace Quaver.Shared.Online
             }
 
             // Initiate the connection to the game server.
-            Client.Connect(SteamUser.GetSteamID().m_SteamID, SteamFriends.GetPersonaName(),
-                SteamManager.PTicket, SteamManager.PcbTicket, false);
+            Client.Connect(SteamUser.GetSteamID().m_SteamID, SteamFriends.GetPersonaName(), false);
         }
 
         /// <summary>
@@ -521,7 +514,7 @@ namespace Quaver.Shared.Online
         /// <param name="e"></param>
         private static void OnRetrievedOnlineScores(object sender, RetrievedOnlineScoresEventArgs e)
         {
-            Logger.Important($"Retrieved scores and ranked status for: {e.Id} | {e.Md5} | {e.Response.Code}", LogType.Network);
+            Logger.Important($"Retrieved scores and ranked status for: {e.Id} | {e.Md5}", LogType.Network);
 
             try
             {
@@ -1935,6 +1928,7 @@ namespace Quaver.Shared.Online
                 });
             });
 
+            ScoresHelper.SetRatingProcessors(scores);
             return scores;
         }
     }

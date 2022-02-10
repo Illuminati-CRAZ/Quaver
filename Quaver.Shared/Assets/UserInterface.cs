@@ -251,6 +251,7 @@ namespace Quaver.Shared.Assets
         public static Texture2D MenuLogo => TextureManager.Load(@"Quaver.Resources/Textures/UI/MainMenu/logo.png");
         public static Texture2D NavigationButton => TextureManager.Load(@"Quaver.Resources/Textures/UI/MainMenu/navigation-button.png");
         public static Texture2D NavigationButtonSelected => TextureManager.Load(@"Quaver.Resources/Textures/UI/MainMenu/navigation-button-selected.png");
+        public static Texture2D NavigationButtonHovered => TextureManager.Load(@"Quaver.Resources/Textures/UI/MainMenu/navigation-button-hovered.png");
         public static Texture2D NewsPanel => TextureManager.Load(@"Quaver.Resources/Textures/UI/MainMenu/news-panel.png");
         public static Texture2D MenuTipPanel => TextureManager.Load(@"Quaver.Resources/Textures/UI/MainMenu/menu-tip-panel.png");
         public static Texture2D NoteVisualizer => TextureManager.Load(@"Quaver.Resources/Textures/UI/MainMenu/notes.png");
@@ -261,5 +262,7 @@ namespace Quaver.Shared.Assets
         public static Texture2D AutoModRefreshButton => TextureManager.Load(@"Quaver.Resources/Textures/UI/Editor/AutoMod/refresh-button.png");
         public static Texture2D AutoModIconCritical => TextureManager.Load(@"Quaver.Resources/Textures/UI/Editor/AutoMod/icon-critical.png");
         public static Texture2D AutoModIconWarning => TextureManager.Load(@"Quaver.Resources/Textures/UI/Editor/AutoMod/icon-warning.png");
+        public static Texture2D EditorBannerButton => TextureManager.Load(@"Quaver.Resources/Textures/UI/Editor/banner-button.png");
+        public static Texture2D EditorBackgroundButton => TextureManager.Load(@"Quaver.Resources/Textures/UI/Editor/background-button.png");
     }
 }
