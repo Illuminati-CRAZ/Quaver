@@ -36,6 +36,8 @@ namespace Quaver.Shared.Config
 {
     public static class ConfigManager
     {
+        internal static BindableInt SvScale { get; private set; }
+
         /// <summary>
         ///     These are all values that should never ben
         /// </summary>
@@ -863,6 +865,8 @@ namespace Quaver.Shared.Config
             // Read / Set Config Values
             // NOTE: MAKE SURE TO SET THE VALUE TO AUTO-SAVE WHEN CHANGING! THIS ISN'T DONE AUTOMATICALLY.
             // YOU CAN DO THIS DOWN BELOW, AFTER THE CONFIG HAS WRITTEN FOR THE FIRST TIME.
+            SvScale = ReadInt(@"SvScale", 100, 0, 200, data);
+
             GameDirectory = ReadSpecialConfigType(SpecialConfigType.Directory, @"GameDirectory", _gameDirectory, data);
             SkinDirectory = ReadSpecialConfigType(SpecialConfigType.Directory, @"SkinDirectory", _skinDirectory, data);
             ScreenshotDirectory = ReadSpecialConfigType(SpecialConfigType.Directory, @"ScreenshotDirectory", _screenshotDirectory, data);

@@ -172,6 +172,11 @@ namespace Quaver.Shared.Screens.Options
                 }),
                 new OptionsSection("Gameplay", UserInterface.OptionsGameplay, new List<OptionsSubcategory>
                 {
+                    new OptionsSubcategory("Jank", new List<OptionsItem>()
+                    {
+                        new OptionsSlider(containerRect, "SV Scale", ConfigManager.SvScale, i => $"{i}%")
+                    }),
+
                     new OptionsSubcategory("Scrolling", new List<OptionsItem>()
                     {
                         new OptionsItemScrollDirection(containerRect, "4K Scroll Direction", ConfigManager.ScrollDirection4K),
