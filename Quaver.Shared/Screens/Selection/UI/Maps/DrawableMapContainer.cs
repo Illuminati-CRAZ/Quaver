@@ -109,7 +109,8 @@ namespace Quaver.Shared.Screens.Selection.UI.Maps
         /// <param name="index"></param>
         public void UpdateContent(Map map, int index)
         {
-            Name.Text = map.DifficultyName ?? "";
+            // Name.Text = map.DifficultyName ?? "";
+            Name.Text = "";
             Name.Tint = ColorHelper.DifficultyToColor((float) map.DifficultyFromMods(ModManager.Mods));
 
             Creator.Text = map.Creator ?? "";

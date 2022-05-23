@@ -260,7 +260,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Leaderboard
                 MapManager.Selected.Value.NeedsOnlineUpdate = false;
 
             StopLoading();
-            FetchScoreTask.Run(MapManager.Selected.Value, 400);
+            // FetchScoreTask.Run(MapManager.Selected.Value, 400);
             StartLoading();
         }
 

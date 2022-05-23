@@ -103,7 +103,8 @@ namespace Quaver.Shared.Screens.Selection.UI.FilterPanel.MapInformation
                 Y = ArtistTitle.Height + 8,
             };
 
-            AddContainedDrawable(DifficultyMods);
+            // AddContainedDrawable(DifficultyMods);
+            DifficultyMods.Parent = this;
         }
 
         private void CreateMetadata()
@@ -165,7 +166,7 @@ namespace Quaver.Shared.Screens.Selection.UI.FilterPanel.MapInformation
                     ? "" : $" ({JudgementWindowsDatabaseCache.Selected.Value.Name})";
 
                 DifficultyMods.Text = $"[{map.DifficultyName}]{mods}{windows}";
-                DifficultyMods.TruncateWithEllipsis(480);
+                // DifficultyMods.TruncateWithEllipsis(480);
 
                 //  Reset positions of the text
                 ArtistTitle.ClearAnimations();
