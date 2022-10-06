@@ -786,6 +786,12 @@ namespace Quaver.Shared.Config
         internal static Bindable<string> AudioOutputDevice { get; private set; }
 
         /// <summary>
+        ///     Dictates whether or not this is the first write of the file for the current game session.
+        ///     (Not saved in Config)
+        /// </summary>
+        private static bool FirstWrite { get; set; }
+
+        /// <summary>
         /// </summary>
 
         /// <summary>
