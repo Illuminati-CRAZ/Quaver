@@ -36,8 +36,6 @@ namespace Quaver.Shared.Config
 {
     public static class ConfigManager
     {
-        internal static Bindable<string> DatabasePath { get; private set; }
-
         /// <summary>
         ///     These are all values that should never ben
         /// </summary>
@@ -881,7 +879,6 @@ namespace Quaver.Shared.Config
             // NOTE: MAKE SURE TO SET THE VALUE TO AUTO-SAVE WHEN CHANGING! THIS ISN'T DONE AUTOMATICALLY.
             // YOU CAN DO THIS DOWN BELOW, AFTER THE CONFIG HAS WRITTEN FOR THE FIRST TIME.
             GameDirectory = ReadSpecialConfigType(SpecialConfigType.Directory, @"GameDirectory", _gameDirectory, data);
-            DatabasePath = ReadSpecialConfigType(SpecialConfigType.Path, @"DatabasePath", _gameDirectory + "/quaver.db", data);
             SkinDirectory = ReadSpecialConfigType(SpecialConfigType.Directory, @"SkinDirectory", _skinDirectory, data);
             ScreenshotDirectory = ReadSpecialConfigType(SpecialConfigType.Directory, @"ScreenshotDirectory", _screenshotDirectory, data);
             ReplayDirectory = ReadSpecialConfigType(SpecialConfigType.Directory, @"ReplayDirectory", _replayDirectory, data);
