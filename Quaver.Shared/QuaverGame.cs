@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using ManagedBass;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -100,6 +101,7 @@ using Quaver.Shared.Skinning;
 using Quaver.Shared.Window;
 using Steamworks;
 using Wobble;
+using Wobble.Audio;
 using Wobble.Audio.Samples;
 using Wobble.Audio.Tracks;
 using Wobble.Bindables;
@@ -319,6 +321,7 @@ namespace Quaver.Shared
         /// </summary>
         protected override void UnloadContent()
         {
+            ConfigManager.WriteConfigFileAsync().Wait();
             OnlineManager.Client?.Disconnect();
             Transitioner.Dispose();
             DiscordHelper.Shutdown();
@@ -407,6 +410,7 @@ namespace Quaver.Shared
         {
             DeleteTemporaryFiles();
 
+            SetAudioDevice();
             DatabaseManager.Initialize();
             ScoreDatabaseCache.CreateTable();
             MapDatabaseCache.Load(false);
@@ -892,6 +896,8 @@ namespace Quaver.Shared
                     CurrentScreen?.Exit(() => new MultiplayerLobbyScreen());
                     break;
                 case QuaverScreenType.Multiplayer:
+                    var screen = (MultiplayerGameScreen) CurrentScreen;
+                    screen.DontLeaveGameUponScreenSwitch = true;
                     CurrentScreen?.Exit(() => new MultiplayerGameScreen());
                     break;
                 case QuaverScreenType.Music:
@@ -927,6 +933,25 @@ namespace Quaver.Shared
                     p.PriorityClass = priority;
             }
             catch (Win32Exception) { /* do nothing */ }
+        }
+
+        public static void SetAudioDevice(bool reloadResources = false)
+        {
+            for (var i = 1; i < Bass.DeviceCount; i++)
+            {
+                if (ConfigManager.AudioOutputDevice.Value != Bass.GetDeviceInfo(i).Name)
+                    continue;
+
+                AudioManager.Initialize(ConfigManager.DevicePeriod.Value, ConfigManager.DeviceBufferLengthMultiplier.Value, i);
+                break;
+            }
+
+            if (!reloadResources)
+                return;
+
+            AudioEngine.Track.Stop();
+            CustomAudioSampleCache.Dispose();
+            SkinManager.Skin.LoadSoundEffects();
         }
 
 #if VISUAL_TESTS
