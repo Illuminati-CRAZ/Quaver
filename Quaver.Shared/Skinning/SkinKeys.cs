@@ -168,6 +168,10 @@ namespace Quaver.Shared.Skinning
         [FixedScale]
         internal float JudgementBurstPosY { get; private set; }
 
+        internal bool DisplayJudgementsInEachColumn { get; private set; }
+
+        internal bool RotateJudgements { get; private set; }
+
         [FixedScale]
         internal float HitErrorPosX { get; private set; }
 
@@ -200,8 +204,22 @@ namespace Quaver.Shared.Skinning
 
         internal Color JudgementCounterFontColor { get; private set; }
 
+        internal bool UseJudgementColorForNumbers { get; private set; }
+
         [FixedScale]
         internal float JudgementCounterSize { get; private set; }
+
+        [FixedScale]
+        internal float JudgementCounterPosX { get; private set; }
+
+        [FixedScale]
+        internal float JudgementCounterPosY { get; private set; }
+
+        internal float JudgementCounterPadding { get; private set; }
+
+        internal bool JudgementCounterHorizontal { get; private set; }
+
+        internal bool JudgementCounterFadeToAlpha { get; private set; }
 
         internal bool DrawLongNoteEnd { get; private set; }
 
@@ -467,6 +485,8 @@ namespace Quaver.Shared.Skinning
             ComboPosX = ConfigHelper.ReadInt32((int) ComboPosX, ini["ComboPosX"]);
             ComboPosY = ConfigHelper.ReadInt32((int) ComboPosY, ini["ComboPosY"]);
             JudgementBurstPosY = ConfigHelper.ReadInt32((int) JudgementBurstPosY, ini["JudgementBurstPosY"]);
+            DisplayJudgementsInEachColumn = ConfigHelper.ReadBool(DisplayJudgementsInEachColumn, ini["DisplayJudgementsInEachColumn"]);
+            RotateJudgements = ConfigHelper.ReadBool(RotateJudgements, ini["RotateJudgements"]);
             HealthBarType = ConfigHelper.ReadEnum(HealthBarType, ini["HealthBarType"]);
             HealthBarKeysAlignment = ConfigHelper.ReadEnum(HealthBarKeysAlignment, ini["HealthBarKeysAlignment"]);
             HealthBarScale = ConfigHelper.ReadInt32((int) HealthBarScale, ini["HealthBarScale"]);
@@ -479,7 +499,13 @@ namespace Quaver.Shared.Skinning
             SongTimeProgressActiveColor = ConfigHelper.ReadColor(SongTimeProgressActiveColor, ini["SongTimeProgressActiveColor"]);
             JudgementCounterAlpha = ConfigHelper.ReadFloat(JudgementCounterAlpha, ini["JudgementCounterAlpha"]);
             JudgementCounterFontColor = ConfigHelper.ReadColor(JudgementCounterFontColor, ini["JudgementCounterFontColor"]);
+            UseJudgementColorForNumbers = ConfigHelper.ReadBool(UseJudgementColorForNumbers, ini["UseJudgementColorForNumbers"]);
             JudgementCounterSize = ConfigHelper.ReadInt32((int) JudgementCounterSize, ini["JudgementCounterSize"]);
+            JudgementCounterPosX = ConfigHelper.ReadInt32((int) JudgementCounterPosX, ini["JudgementCounterPosX"]);
+            JudgementCounterPosY = ConfigHelper.ReadInt32((int) JudgementCounterPosY, ini["JudgementCounterPosY"]);
+            JudgementCounterPadding = ConfigHelper.ReadInt32((int) JudgementCounterPadding, ini["JudgementCounterPadding"]);
+            JudgementCounterHorizontal = ConfigHelper.ReadBool(JudgementCounterHorizontal, ini["JudgementCounterHorizontal"]);
+            JudgementCounterFadeToAlpha = ConfigHelper.ReadBool(JudgementCounterFadeToAlpha, ini["JudgementCounterFadeToAlpha"]);
             DrawLongNoteEnd = ConfigHelper.ReadBool(DrawLongNoteEnd, ini["DrawLongNoteEnd"]);
             ScoreDisplayScale = ConfigHelper.ReadInt32((int) ScoreDisplayScale, ini["ScoreDisplayScale"]);
             RatingDisplayScale = ConfigHelper.ReadInt32((int) RatingDisplayScale, ini["RatingDisplayScale"]);

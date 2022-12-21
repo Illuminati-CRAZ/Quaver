@@ -5,21 +5,17 @@ using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MoreLinq;
 using Quaver.API.Enums;
 using Quaver.API.Maps;
 using Quaver.API.Maps.Structures;
 using Quaver.Shared.Assets;
 using Quaver.Shared.Audio;
 using Quaver.Shared.Config;
-using Quaver.Shared.Database.Maps;
 using Quaver.Shared.Graphics;
 using Quaver.Shared.Graphics.Graphs;
-using Quaver.Shared.Graphics.Menu.Border;
 using Quaver.Shared.Helpers;
 using Quaver.Shared.Scheduling;
 using Quaver.Shared.Screens.Edit.Actions;
-using Quaver.Shared.Screens.Edit.Actions.HitObjects;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Flip;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Move;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Place;
@@ -28,6 +24,7 @@ using Quaver.Shared.Screens.Edit.Actions.HitObjects.Remove;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.RemoveBatch;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Resize;
 using Quaver.Shared.Screens.Edit.Actions.HitObjects.Resnap;
+using Quaver.Shared.Screens.Edit.Actions.HitObjects.Reverse;
 using Quaver.Shared.Screens.Edit.Actions.Timing.Add;
 using Quaver.Shared.Screens.Edit.Actions.Timing.AddBatch;
 using Quaver.Shared.Screens.Edit.Actions.Timing.ChangeBpm;
@@ -41,7 +38,6 @@ using Quaver.Shared.Screens.Edit.UI.Playfield.Seek;
 using Quaver.Shared.Screens.Edit.UI.Playfield.Timeline;
 using Quaver.Shared.Screens.Edit.UI.Playfield.Waveform;
 using Quaver.Shared.Screens.Edit.UI.Playfield.Zoom;
-using Quaver.Shared.Screens.Editor.UI.Rulesets.Keys;
 using Quaver.Shared.Screens.Results.UI.Tabs.Overview.Graphs.Footer;
 using Quaver.Shared.Skinning;
 using Wobble;
@@ -362,6 +358,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Playfield
             ActionManager.HitObjectBatchRemoved += OnHitObjectBatchRemoved;
             ActionManager.HitObjectBatchPlaced += OnHitObjectBatchPlaced;
             ActionManager.HitObjectsFlipped += OnHitObjectsFlipped;
+            ActionManager.HitObjectsReversed += OnHitObjectsReversed;
             ActionManager.HitObjectsMoved += OnHitObjectsMoved;
             ActionManager.HitObjectsResnapped += OnHitObjectsResnapped;
             ActionManager.TimingPointAdded += OnTimingPointAdded;
@@ -468,6 +465,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Playfield
             ActionManager.HitObjectBatchRemoved -= OnHitObjectBatchRemoved;
             ActionManager.HitObjectBatchPlaced -= OnHitObjectBatchPlaced;
             ActionManager.HitObjectsFlipped -= OnHitObjectsFlipped;
+            ActionManager.HitObjectsReversed -= OnHitObjectsReversed;
             ActionManager.HitObjectsMoved -= OnHitObjectsMoved;
             ActionManager.HitObjectsResnapped -= OnHitObjectsResnapped;
             ActionManager.TimingPointAdded -= OnTimingPointAdded;
@@ -996,6 +994,20 @@ namespace Quaver.Shared.Screens.Edit.UI.Playfield
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
+        private void OnHitObjectsReversed(object sender, EditorHitObjectsReversedEventArgs e)
+        {
+            if (IsUneditable)
+                return;
+
+            // Reverse changes the order of hit objects
+            HitObjects = HitObjects.OrderBy(x => x.Info.StartTime).ToList();
+            RefreshHitObjects();
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnHitObjectsMoved(object sender, EditorHitObjectsMovedEventArgs e)
         {
             if (IsUneditable)
@@ -1293,6 +1305,12 @@ namespace Quaver.Shared.Screens.Edit.UI.Playfield
 
             if (ho == null)
                 return;
+
+            if (SelectedHitObjects.Value.Contains(ho.Info))
+            {
+                ActionManager.EditScreen.DeleteSelectedObjects();
+                return;
+            }
 
             ActionManager.RemoveHitObject(ho.Info);
         }
