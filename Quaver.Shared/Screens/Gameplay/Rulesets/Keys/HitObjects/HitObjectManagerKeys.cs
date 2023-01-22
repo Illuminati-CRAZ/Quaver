@@ -404,8 +404,59 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
                 HeldLongNoteLanes.Add(new Queue<GameplayHitObjectKeys>());
             }
 
+            // Reorder Hit Object Info queue if SVs are used
+            var hitObjects = map.HitObjects;
+
+            if (map.SliderVelocities.Count > 0)
+            {
+                var positions = map.HitObjects.Select(x => GetPositionFromTime(x.StartTime));
+                var objects = hitObjects.Zip(positions, (hitObject, position) => new HitObjectInfoWithPosition{ Info = hitObject, Position = position } );
+
+                var positiveObjects = new Queue<HitObjectInfoWithPosition>(objects.Where(x => x.Position > 0));
+                var negativeObjects = new Queue<HitObjectInfoWithPosition>(objects.Where(x => x.Position < 0));
+
+                // No objects at negative position implies no reordering necessary
+                if (negativeObjects.Count() != 0)
+                {
+                    // objects at zero position should be queued first
+                    hitObjects = objects.Where(x => x.Position == 0).Select(x => x.Info).ToList();
+
+                    // add objects to queue based on SVs
+                    var markers = new List<long>(VelocityPositionMarkers);
+                    markers.Insert(0, 0);
+
+                    foreach (var marker in markers)
+                    {
+                        if (marker > 0)
+                        {
+                            while (positiveObjects.Peek().Position <= marker)
+                            {
+                                hitObjects.Add(positiveObjects.Dequeue().Info);
+                            }
+                        }
+                        else if (marker < 0)
+                        {
+                            while (negativeObjects.Peek().Position >= marker)
+                            {
+                                hitObjects.Add(negativeObjects.Dequeue().Info);
+                            }
+                        }
+                    }
+
+                    // hitobjects that come after the last SV get added to end of queue
+                    while (positiveObjects.Count > 0)
+                    {
+                        hitObjects.Add(positiveObjects.Dequeue().Info);
+                    }
+                    while (negativeObjects.Count > 0)
+                    {
+                        hitObjects.Add(negativeObjects.Dequeue().Info);
+                    }
+                }
+            }
+
             // Sort Hit Object Info into their respective lanes
-            foreach (var info in map.HitObjects)
+            foreach (var info in hitObjects)
             {
                 // Skip objects that aren't a second within range
                 if (skipObjects)
