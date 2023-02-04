@@ -334,6 +334,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             UpdatePoolingPositions();
             InitializePositionMarkers();
             UpdateCurrentTrackPosition();
+            InitializeBuckets();
 
             InitializeHitStats();
 
@@ -808,6 +809,109 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             var curPos = VelocityPositionMarkers[index];
             curPos += (long)((time - Map.SliderVelocities[index].StartTime) * Map.SliderVelocities[index].Multiplier * TrackRounding);
             return curPos;
+        }
+
+        // indices of SVs associated with intervals of position
+        // used for finding times associated with a position
+        public List<long> DirectionChangePositions { get; private set; }
+        public List<List<int>> ScrollVelocityBuckets { get; private set; }
+
+        private void InitializeBuckets()
+        {
+            DirectionChangePositions = new List<long>();
+            ScrollVelocityBuckets = new List<List<int>>();
+
+            // create buckets
+            int prevSign = -2;
+            foreach (var sv in Map.SliderVelocities)
+            {
+                int currentSign = Math.Sign(sv.Multiplier); // what about the weird numbers, +=inf and nan?
+
+                if (currentSign != prevSign)
+                {
+                    DirectionChangePositions.Add(GetPositionFromTime(sv.StartTime));
+                    prevSign = currentSign;
+                }
+            }
+
+            DirectionChangePositions.Add(long.MinValue);
+            DirectionChangePositions = DirectionChangePositions.Distinct().ToList();
+            DirectionChangePositions.Sort();
+
+            DirectionChangePositions.ForEach(x => ScrollVelocityBuckets.Add(new List<int>()));
+
+            // populate buckets
+            for (int i = 0; i < Map.SliderVelocities.Count; i++)
+            {
+                // calculate range of sv
+                var sv = Map.SliderVelocities[i];
+
+                long[] positions = new long[2];
+                positions[0] = GetPositionFromTime(sv.StartTime);
+
+                if (i != Map.SliderVelocities.Count - 1)
+                    positions[1] = GetPositionFromTime(Map.SliderVelocities[i + 1].StartTime);
+                else
+                {
+                    positions[1] = Math.Sign(sv.Multiplier) switch
+                    {
+                        1 => long.MaxValue,
+                        -1 => long.MinValue,
+                        0 => positions[0],
+                        _ => throw new Exception("If this happens, something is wrong with C#")
+                    };
+                }
+
+                Array.Sort(positions);
+
+                // find buckets that sv intersects with
+                for (int j = 0; j < DirectionChangePositions.Count; j++)
+                {
+                    long[] bucketPositions = new long[2];
+                    bucketPositions[0] = DirectionChangePositions[j];
+                    bucketPositions[1] = j != DirectionChangePositions.Count - 1 ? DirectionChangePositions[j + 1] : long.MaxValue;
+
+                    Array.Sort(bucketPositions);
+
+                    // skip if no intersection
+                    if (positions[1] < bucketPositions[0] || positions[0] > bucketPositions[1])
+                        continue;
+
+                    ScrollVelocityBuckets[j].Add(i);
+                }
+            }
+        }
+
+        public (List<float> exactTimes, List<(float, float)> timeIntervals) GetTimesFromPosition(long position)
+        {
+            var bucket = ScrollVelocityBuckets[DirectionChangePositions.FindLastIndex(x => position >= x)];
+            var exactTimes = new List<float>();
+            var timeIntervals = new List<(float, float)>();
+
+            // check each sv in bucket
+            foreach (var i in bucket)
+            {
+                // position matches duration of a 0x SV
+                if (Map.SliderVelocities[i].Multiplier == 0 && VelocityPositionMarkers[i] == position)
+                {
+                    // return time interval of 0x SV
+                    float start = Map.SliderVelocities[i].StartTime;
+                    float end = i != Map.SliderVelocities.Count - 1 ? Map.SliderVelocities[i + 1].StartTime : float.PositiveInfinity;
+
+                    timeIntervals.Add((start, end));
+                }
+
+                // position is between current and next sv
+                else if (VelocityPositionMarkers[i] <= position && position < (i != VelocityPositionMarkers.Count - 1 ? VelocityPositionMarkers[i + 1] : long.MaxValue))
+                {
+                    long deltaPosition = position - VelocityPositionMarkers[i];
+                    float deltaTime = (deltaPosition / TrackRounding) / Map.SliderVelocities[i].Multiplier;
+
+                    exactTimes.Add(Map.SliderVelocities[i].StartTime + deltaTime);
+                }
+            }
+
+            return (exactTimes, timeIntervals);
         }
 
         /// <summary>
