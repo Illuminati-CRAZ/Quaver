@@ -13,6 +13,7 @@ using Quaver.API.Helpers;
 using Quaver.API.Maps;
 using Quaver.Shared.Config;
 using Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects;
+using Wobble.Logging;
 
 namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
 {
@@ -91,7 +92,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         /// <param name="map"></param>
         public void GenerateTimingLineInfo(Qua map)
         {
-            List<TimingLineInfo> temp = new List<TimingLineInfo>();
+            var lines = new List<TimingLineInfo>();
 
             for (var i = 0; i < map.TimingPoints.Count; i++)
             {
@@ -119,14 +120,42 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
                 {
                     var offset = HitObjectManager.GetPositionFromTime(songPos);
 
-                    // Do not initialize any timing lines that do not appear in gameplay
-                    if (!(HitObjectManager.CurrentTrackPosition - offset > HitObjectManager.RecycleObjectPositionThreshold && songPos < HitObjectManager.CurrentAudioPosition))
-                        temp.Add(new TimingLineInfo(songPos, offset));
+                    lines.Add(new TimingLineInfo(songPos, offset));
                 }
             }
 
-            // Sort timing lines by position instead of time
-            CachedInfo = new Queue<TimingLineInfo>(temp.OrderBy(line => line.TrackOffset));
+            var moreLines = new List<TimingLineInfo>();
+
+            // debug
+            // int count = 1;
+
+            foreach (var line in lines)
+            {
+                // Logger.Debug("Processing line " + count++ + " of " + lines.Count, LogType.Runtime);
+
+                (var exactTimes, var timeIntervals) = HitObjectManager.GetTimesFromPosition(line.TrackOffset);
+                var times = exactTimes.Union(timeIntervals.Select(x => x.Item2)).Distinct();
+
+                // see where lines are being duplicated while testing
+                long testOffset = 1000;
+                int multiplier = 1;
+
+                foreach (var time in times)
+                {
+                    // don't need to duplicate every line
+                    if (time == line.StartTime)
+                        continue;
+
+                    // probably won't see
+                    if (Math.Abs(map.GetScrollVelocityAt(time)?.Multiplier ?? map.InitialScrollVelocity) > 100)
+                        continue;
+
+                    moreLines.Add(new TimingLineInfo(time, line.TrackOffset + testOffset * multiplier++));
+                }
+            }
+
+            // Sort lines by time
+            CachedInfo = new Queue<TimingLineInfo>(lines.Union(moreLines).OrderBy(x => x.StartTime));
         }
 
         /// <summary>
@@ -143,14 +172,17 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             Pool = new Queue<TimingLine>();
             Info = new Queue<TimingLineInfo>(CachedInfo);
 
-            while (Info.Count > 0)
+            // skip unnecessary timing lines
+            while (Info.Count > 0 && Info.Peek().StartTime < HitObjectManager.CurrentAudioPosition &&
+                   Math.Abs(HitObjectManager.CurrentTrackPosition - Info.Peek().TrackOffset) > HitObjectManager.RecycleObjectPositionThreshold)
             {
-                if (HitObjectManager.CurrentTrackPosition - Info.Peek().TrackOffset > HitObjectManager.RecycleObjectPositionThreshold)
-                    Info.Dequeue();
-                else if (HitObjectManager.CurrentTrackPosition - Info.Peek().TrackOffset < HitObjectManager.CreateObjectPositionThreshold)
-                    CreatePoolObject(Info.Dequeue());
-                else
-                    break;
+                Info.Dequeue();
+            }
+
+            while (Info.Count > 0 && (Math.Abs(HitObjectManager.CurrentTrackPosition - Info.Peek().TrackOffset) < HitObjectManager.CreateObjectPositionThreshold ||
+                   Info.Peek().StartTime - HitObjectManager.CurrentAudioPosition < HitObjectManager.CreateObjectTimeThreshold))
+            {
+                CreatePoolObject(Info.Dequeue());
             }
         }
 
@@ -167,9 +199,11 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             }
 
             // Recycle necessary pool objects
-            while (Pool.Count > 0 && Pool.Peek().CurrentTrackPosition > HitObjectManager.RecycleObjectPositionThreshold && Pool.Peek().Info.StartTime < HitObjectManager.CurrentAudioPosition)
+            while (Pool.Count > 0 && Pool.Peek().Info.StartTime < HitObjectManager.CurrentAudioPosition &&
+                   Math.Abs(Pool.Peek().CurrentTrackPosition) > HitObjectManager.RecycleObjectPositionThreshold)
             {
                 var line = Pool.Dequeue();
+
                 if (Info.Count > 0)
                 {
                     line.Info = Info.Dequeue();
@@ -179,8 +213,13 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             }
 
             // Create new pool objects if they are in range
-            while (Info.Count > 0 && HitObjectManager.CurrentTrackPosition - Info.Peek().TrackOffset < HitObjectManager.CreateObjectPositionThreshold)
+            while (Info.Count > 0 && (Math.Abs(Pool.Peek().CurrentTrackPosition) < HitObjectManager.CreateObjectPositionThreshold ||
+                   Info.Peek().StartTime - HitObjectManager.CurrentAudioPosition < HitObjectManager.CreateObjectTimeThreshold))
+            {
                 CreatePoolObject(Info.Dequeue());
+            }
+
+            // Logger.Debug(Pool.Count.ToString(), LogType.Runtime);
         }
 
         /// <summary>
