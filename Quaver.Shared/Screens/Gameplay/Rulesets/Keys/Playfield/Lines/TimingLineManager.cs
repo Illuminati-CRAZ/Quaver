@@ -127,11 +127,11 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             var moreLines = new List<TimingLineInfo>();
 
             // debug
-            // int count = 1;
+            int count = 1;
 
             foreach (var line in lines)
             {
-                // Logger.Debug("Processing line " + count++ + " of " + lines.Count, LogType.Runtime);
+                Logger.Debug("Processing line " + count++ + " of " + lines.Count, LogType.Runtime);
 
                 (var exactTimes, var timeIntervals) = HitObjectManager.GetTimesFromPosition(line.TrackOffset);
                 var times = exactTimes.Union(timeIntervals.Select(x => x.Item2)).Distinct();
@@ -140,17 +140,21 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
                 long testOffset = 1000;
                 int multiplier = 1;
 
+                const float EPSILON = 1;
+
                 foreach (var time in times)
                 {
                     // don't need to duplicate every line
-                    if (time == line.StartTime)
+                    if (Math.Abs(time - line.StartTime) < EPSILON)
                         continue;
 
-                    // probably won't see
-                    if (Math.Abs(map.GetScrollVelocityAt(time)?.Multiplier ?? map.InitialScrollVelocity) > 100)
+                    // irrelevant
+                    if (time < 0)
                         continue;
 
                     moreLines.Add(new TimingLineInfo(time, line.TrackOffset + testOffset * multiplier++));
+
+                    Logger.Debug("Duplicated line. Original = " + line.StartTime + ", New = " + time, LogType.Runtime);
                 }
             }
 
@@ -173,16 +177,9 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             Info = new Queue<TimingLineInfo>(CachedInfo);
 
             // skip unnecessary timing lines
-            while (Info.Count > 0 && Info.Peek().StartTime < HitObjectManager.CurrentAudioPosition &&
-                   Math.Abs(HitObjectManager.CurrentTrackPosition - Info.Peek().TrackOffset) > HitObjectManager.RecycleObjectPositionThreshold)
+            while (Info.Count > 0 && Info.Peek().StartTime < HitObjectManager.CurrentAudioPosition)
             {
                 Info.Dequeue();
-            }
-
-            while (Info.Count > 0 && (Math.Abs(HitObjectManager.CurrentTrackPosition - Info.Peek().TrackOffset) < HitObjectManager.CreateObjectPositionThreshold ||
-                   Info.Peek().StartTime - HitObjectManager.CurrentAudioPosition < HitObjectManager.CreateObjectTimeThreshold))
-            {
-                CreatePoolObject(Info.Dequeue());
             }
         }
 
@@ -210,16 +207,18 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
                     line.UpdateSpritePosition(HitObjectManager.CurrentTrackPosition);
                     Pool.Enqueue(line);
                 }
+                else
+                {
+                    line.Destroy(); // prevents freezing when repeatedly skipping to line art in cherry blossoms
+                }
             }
 
             // Create new pool objects if they are in range
-            while (Info.Count > 0 && (Math.Abs(Pool.Peek().CurrentTrackPosition) < HitObjectManager.CreateObjectPositionThreshold ||
+            while (Info.Count > 0 && (Math.Abs(Info.Peek().TrackOffset - HitObjectManager.CurrentTrackPosition) < HitObjectManager.CreateObjectPositionThreshold ||
                    Info.Peek().StartTime - HitObjectManager.CurrentAudioPosition < HitObjectManager.CreateObjectTimeThreshold))
             {
                 CreatePoolObject(Info.Dequeue());
             }
-
-            // Logger.Debug(Pool.Count.ToString(), LogType.Runtime);
         }
 
         /// <summary>
