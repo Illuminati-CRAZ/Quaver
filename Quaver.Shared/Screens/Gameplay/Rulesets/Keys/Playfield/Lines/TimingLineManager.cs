@@ -92,7 +92,8 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         /// <param name="map"></param>
         public void GenerateTimingLineInfo(Qua map)
         {
-            var lines = new List<TimingLineInfo>();
+            // generate base timing lines
+            var originalLines = new List<TimingLineInfo>();
 
             for (var i = 0; i < map.TimingPoints.Count; i++)
             {
@@ -120,31 +121,25 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
                 {
                     var offset = HitObjectManager.GetPositionFromTime(songPos);
 
-                    lines.Add(new TimingLineInfo(songPos, offset));
+                    originalLines.Add(new TimingLineInfo(songPos, offset));
                 }
             }
 
-            var moreLines = new List<TimingLineInfo>();
+            // make copies of a line for each time show up during gameplay
+            var lines = new List<TimingLineInfo>();
 
-            // debug
-            int count = 1;
-
-            foreach (var line in lines)
+            foreach (var line in originalLines)
             {
-                Logger.Debug("Processing line " + count++ + " of " + lines.Count, LogType.Runtime);
-
                 (var exactTimes, var timeIntervals) = HitObjectManager.GetTimesFromPosition(line.TrackOffset);
-                var times = exactTimes.Union(timeIntervals.Select(x => x.Item2)).Distinct();
-
-                // see where lines are being duplicated while testing
-                long testOffset = 1000;
-                int multiplier = 1;
+                var times = exactTimes.Union(timeIntervals.Select(x => x.Item2)).Distinct().OrderBy(x => x);
 
                 const float EPSILON = 1;
 
+                // easily filter out some unnecessary ones
+                var temp = new List<float>();
                 foreach (var time in times)
                 {
-                    // don't need to duplicate every line
+                    // don't need to make a copy of the original line
                     if (Math.Abs(time - line.StartTime) < EPSILON)
                         continue;
 
@@ -152,14 +147,69 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
                     if (time < 0)
                         continue;
 
-                    moreLines.Add(new TimingLineInfo(time, line.TrackOffset + testOffset * multiplier++));
-
-                    Logger.Debug("Duplicated line. Original = " + line.StartTime + ", New = " + time, LogType.Runtime);
+                    temp.Add(time);
                 }
+
+                // use this time instead of the copy's because of floating point rounding errors
+                int index = HitObjectManager.FindIntervalIndex(temp, line.StartTime);
+                Logger.Debug($"Inserting at {index + 1}", LogType.Runtime);
+                temp.Insert(index + 1, line.StartTime);
+
+                LinkedList<float> linkedTimes = new LinkedList<float>(temp);
+
+                Logger.Debug(String.Join(", ", linkedTimes), LogType.Runtime);
+
+                // further filtering
+
+                // remove copies that don't unload before later copies load
+                var current = linkedTimes.Last;
+                while (current.Previous != null)
+                {
+                    float start = current.Previous.Value;
+                    float end = current.Value;
+
+                    (int i, int j) = HitObjectManager.FindItemIndicesInInterval(map.SliderVelocities.Select(x => x.StartTime).ToList(), start, end);
+
+                    // check if no position markers
+                    if (i == -1 || j == -1)
+                    {
+                        Logger.Debug("Removed " + current.Previous.Value, LogType.Runtime);
+                        linkedTimes.Remove(current.Previous);
+                        continue;
+                    }
+
+                    var positionMarkers = HitObjectManager.VelocityPositionMarkers.GetRange(i, j - i + 1);
+
+                    // remove earlier line if it's recycle threshold isn't reached before the later line
+                    var maxDelta = Math.Max(Math.Abs(positionMarkers.Max() - line.TrackOffset),
+                                            Math.Abs(positionMarkers.Min() - line.TrackOffset));
+
+                    if (maxDelta < HitObjectManager.RecycleObjectPositionThreshold)
+                    {
+                        Logger.Debug("Removed " + current.Previous.Value, LogType.Runtime);
+                        linkedTimes.Remove(current.Previous);
+                        continue;
+                    }
+
+                    current = current.Previous;
+                }
+
+                // remove copies that load within time threshold of later copy
+                // current = linkedTimes.Last;
+                // while (current.Previous != null)
+                // {
+
+                // }
+
+                // debugging
+                const int offset = 1000;
+                int counter = 0;
+
+                lines.AddRange(linkedTimes.Select(time => new TimingLineInfo(time, line.TrackOffset + offset * counter++)));
             }
 
             // Sort lines by time
-            CachedInfo = new Queue<TimingLineInfo>(lines.Union(moreLines).OrderBy(x => x.StartTime));
+            CachedInfo = new Queue<TimingLineInfo>(lines.OrderBy(x => x.StartTime));
         }
 
         /// <summary>

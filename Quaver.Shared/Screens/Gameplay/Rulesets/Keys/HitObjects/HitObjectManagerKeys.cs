@@ -868,11 +868,8 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
                     float end = i != Map.SliderVelocities.Count - 1 ? Map.SliderVelocities[i + 1].StartTime : float.MaxValue;
 
                     AddConstPositionInterval(VelocityPositionMarkers[i], (start, end));
-
-                    continue;
                 }
-
-                if (currentSign != prevSign)
+                else if (currentSign != prevSign)
                 {
                     BucketPositions.Add(VelocityPositionMarkers[i]);
                     prevSign = currentSign;
@@ -956,65 +953,71 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
 
         private int FindBucket(long position)
         {
-            return FindBucket(position, 0, BucketPositions.Count - 1);
+            return FindIntervalIndex(BucketPositions, position);
         }
 
         // basically binary search
-        private int FindBucket(long position, int a, int b)
+        public int FindIntervalIndex<T>(List<T> intervals, T position) where T : IComparable<T>
         {
-            if (a == b)
-                return a;
+            if (intervals.Count == 0)
+                return -1;
 
-            int i = (a + b) / 2;
-            long start = BucketPositions[i];
-            long end = BucketPositions[i + 1];
-
-            if (start <= position && position < end)
-            {
-                return i;
-            }
-            else if (position < start)
-            {
-                return FindBucket(position, a, i - 1);
-            }
-            else
-            {
-                return FindBucket(position, i + 1, b);
-            }
-        }
-
-        private int FindIntervalIndex<T>(List<T> intervals, T position) where T : IComparable<T>
-        {
             return FindIntervalIndex(intervals, position, 0, intervals.Count - 1);
         }
 
         private int FindIntervalIndex<T>(List<T> intervals, T position, int a, int b) where T : IComparable<T>
         {
-            if (a == b)
-                return a;
+            if (a > b)
+                return -1;
 
             int i = (a + b) / 2;
             T start = intervals[i];
+
+            if (i == intervals.Count - 1)
+            {
+                if (start.CompareTo(position) <= 0)
+                    return i;
+                else
+                    return -1;
+            }
+
             T end = intervals[i + 1];
 
-            int startRelation, endRelation;
-            startRelation = position.CompareTo(start);
-            endRelation = position.CompareTo(end);
-
             // start <= position && position < end
-            if ((startRelation >= 0 || endRelation < 0))
+            if (start.CompareTo(position) <= 0 && position.CompareTo(end) < 0)
             {
                 return i;
             }
             // position < start
-            else if (startRelation < 0)
+            else if (position.CompareTo(start) < 0)
             {
                 return FindIntervalIndex(intervals, position, a, i - 1);
             }
+            // position >= end
             else
             {
                 return FindIntervalIndex(intervals, position, i + 1, b);
             }
+        }
+
+        public (int, int) FindItemIndicesInInterval<T>(List<T> items, T a, T b) where T : IComparable<T>
+        {
+            if (a.CompareTo(b) >= 0)
+                throw new ArgumentException("a should be less than b");
+
+            // first and last item
+            int i = FindIntervalIndex(items, a);
+            int j = FindIntervalIndex(items, b);
+
+            if (i == -1 || a.CompareTo(items[i]) > 0)
+                i++;
+            if (j != -1 && b.CompareTo(items[j]) == 0)
+                j--;
+
+            if (i > j)
+                return (-1, -1);
+
+            return (i, j);
         }
 
         public (List<float> exactTimes, List<(float, float)> timeIntervals) GetTimesFromPosition(long position)
@@ -1023,7 +1026,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             var exactTimes = new List<float>();
 
             // check each sv in bucket
-            Logger.Debug(bucket.Count + " SVs in bucket", LogType.Runtime);
+            // Logger.Debug(bucket.Count + " SVs in bucket", LogType.Runtime);
 
             foreach (var i in bucket)
             {
