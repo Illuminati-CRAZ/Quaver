@@ -435,7 +435,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             LongNoteBodySprite.Height = CurrentLongNoteBodySize;
 
             var earliestSpritePosition = GetSpritePosition(offset, EarliestHeldPosition);
-            if (ScrollDirection.Equals(ScrollDirection.Down))
+            if (ScrollDirection == ScrollDirection.Down)
                 LongNoteBodySprite.Y = earliestSpritePosition + LongNoteBodyOffset - CurrentLongNoteBodySize;
             else
                 LongNoteBodySprite.Y = earliestSpritePosition + LongNoteBodyOffset;

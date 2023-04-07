@@ -93,7 +93,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         ///     Associate timing line info with this object
         /// </summary>
         /// <param name="info"></param>
-        public void InitalizeInfo(TimingLineInfo info)
+        public void InitializeInfo(TimingLineInfo info)
         {
             Info = info;
             UpdateSpritePosition(Info.TrackOffset);
@@ -107,7 +107,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         public void UpdateSpritePosition(long offset)
         {
             CurrentTrackPosition = offset - Info.TrackOffset;
-            Y = TrackOffset + (CurrentTrackPosition * (ScrollDirection.Equals(ScrollDirection.Down) ? HitObjectManagerKeys.ScrollSpeed : -HitObjectManagerKeys.ScrollSpeed) / HitObjectManagerKeys.TrackRounding);
+            Y = TrackOffset + (CurrentTrackPosition * (ScrollDirection == ScrollDirection.Down ? HitObjectManagerKeys.ScrollSpeed : -HitObjectManagerKeys.ScrollSpeed) / HitObjectManagerKeys.TrackRounding);
         }
     }
 }

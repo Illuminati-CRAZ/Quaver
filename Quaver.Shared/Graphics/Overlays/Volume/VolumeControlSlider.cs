@@ -25,7 +25,7 @@ namespace Quaver.Shared.Graphics.Overlays.Volume
 
         /// <summary>
         /// </summary>
-        public Slider Slider{ get; private set; }
+        public Slider Slider { get; private set; }
 
         /// <summary>
         /// </summary>
@@ -70,12 +70,14 @@ namespace Quaver.Shared.Graphics.Overlays.Volume
             base.Destroy();
         }
 
-        /// <summary>
-        /// </summary>
-        public void Select()
+        static Color SelectedColor { get; } = ColorHelper.HexToColor("45D6F5");
+
+    /// <summary>
+    /// </summary>
+    public void Select()
         {
-            Icon.Tint = ColorHelper.HexToColor("#45D6F5");
-            Percentage.Tint = Icon.Tint;
+            Icon.Tint = SelectedColor;
+            Percentage.Tint = SelectedColor;
         }
 
         /// <summary>

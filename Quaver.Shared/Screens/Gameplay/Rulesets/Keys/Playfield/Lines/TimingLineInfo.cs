@@ -42,7 +42,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         public void Link(TimingLine line)
         {
             Line = line;
-            Line.InitalizeInfo(this);
+            Line.InitializeInfo(this);
         }
 
         /// <summary>

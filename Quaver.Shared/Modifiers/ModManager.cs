@@ -221,7 +221,16 @@ namespace Quaver.Shared.Modifiers
         /// </summary>
         /// <param name="modIdentifier"></param>
         /// <returns></returns>
-        public static bool IsActivated(ModIdentifier modIdentifier) => CurrentModifiersList.Exists(x => x.ModIdentifier == modIdentifier);
+        public static bool IsActivated(ModIdentifier modIdentifier) // => CurrentModifiersList.Exists(x => x.ModIdentifier == modIdentifier);
+        {
+            foreach (var x in CurrentModifiersList)
+            {
+                if (x.ModIdentifier == modIdentifier)
+                    return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         ///     Removes all items from our list of mods

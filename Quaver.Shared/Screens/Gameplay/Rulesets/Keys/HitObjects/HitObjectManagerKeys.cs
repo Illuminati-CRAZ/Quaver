@@ -224,12 +224,20 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
             get
             {
                 // If there are objects to hit, we're not done.
-                if (HitObjectQueueLanes.Any(lane => lane.Any()))
-                    return false;
+                // if (HitObjectQueueLanes.Any(lane => lane.Any()))
+                foreach (var lane in HitObjectQueueLanes)
+                {
+                    if (lane.Count > 0)
+                        return false;
+                }
 
                 // If there are held LNs, we're not done.
-                if (HeldLongNoteLanes.Any(lane => lane.Any()))
-                    return false;
+                // if (HeldLongNoteLanes.Any(lane => lane.Any()))
+                foreach (var lane in HeldLongNoteLanes)
+                {
+                    if (lane.Count > 0)
+                        return false;
+                }
 
                 // Wait for dead LNs to finish scrolling
                 return CurrentVisualAudioOffset > Map.Length;
