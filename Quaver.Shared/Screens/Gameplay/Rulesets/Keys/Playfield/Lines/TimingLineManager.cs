@@ -14,6 +14,7 @@ using Quaver.API.Maps;
 using Quaver.Shared.Config;
 using Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects;
 using System.Collections.Concurrent;
+using Wobble.Logging;
 
 namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
 {
@@ -103,6 +104,8 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
             // Generate timing line info
             for (var i = 0; i < map.TimingPoints.Count; i++)
             {
+                Logger.Debug($"Timing Point {i}/{map.TimingPoints.Count}", LogType.Runtime);
+
                 if (map.TimingPoints[i].Hidden)
                     continue;
 
@@ -113,9 +116,9 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
                 var signature = (int)map.TimingPoints[i].Signature;
 
                 // Max possible sane value for timing lines
-                const float maxBpm = 9999f;
+                const double maxBpm = 10_000_000;
 
-                var msPerBeat = 60000 / Math.Min(Math.Abs(map.TimingPoints[i].Bpm), maxBpm);
+                var msPerBeat = 60000 / Math.Min(Math.Abs((double)map.TimingPoints[i].Bpm), maxBpm);
                 var increment = signature * msPerBeat;
 
                 // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -123,7 +126,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
                     continue;
 
                 // Initialize timing lines between current timing point and target position
-                for (var songPos = map.TimingPoints[i].StartTime; songPos < target; songPos += increment)
+                for (double songPos = map.TimingPoints[i].StartTime; songPos < target; songPos += increment)
                 {
                     var offset = HitObjectManager.GetPositionFromTime(songPos);
 					SpatialHashMap.Add(offset, new TimingLineInfo(songPos, offset));

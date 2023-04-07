@@ -12,7 +12,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         /// <summary>
         ///     Time at which the timing line reaches the receptor
         /// </summary>
-        public float StartTime { get; set; }
+        public double StartTime { get; set; }
 
         /// <summary>
         ///     The Timing line's Y offset from the receptor
@@ -29,7 +29,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.Playfield.Lines
         /// </summary>
         /// <param name="startTime"></param>
         /// <param name="offset"></param>
-        public TimingLineInfo (float startTime, long offset)
+        public TimingLineInfo (double startTime, long offset)
         {
             StartTime = startTime;
             TrackOffset = offset;

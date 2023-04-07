@@ -373,7 +373,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
                 }
                 else
                 {
-                    SpatialHashMap.Add(info.EarliestTrackPosition, info.LatestTrackPosition, info);
+                    // SpatialHashMap.Add(info.EarliestTrackPosition, info.LatestTrackPosition, info);
                 }
             }
 
