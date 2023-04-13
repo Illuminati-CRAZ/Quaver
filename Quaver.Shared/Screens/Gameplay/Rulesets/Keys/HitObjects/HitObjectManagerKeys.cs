@@ -391,7 +391,9 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
                     // Long LNs need to be added to multiple cells.
                     // If they're _really_ long, they need to be added a _really_ large number of times to the spatial hash map,
                     // which would require an insane amount of memory, so don't do that.
-                    if (info.LatestTrackPosition - info.EarliestTrackPosition > SpatialHashMap.CellSize * 10)
+                    // Negative length LNs (such as those in Cheat Code) cause the same problem.
+                    long length = info.LatestTrackPosition - info.EarliestTrackPosition;
+                    if (length > SpatialHashMap.CellSize * 10 || length < 0)
                     {
                         LongLNs.Add(info);
                     }
@@ -506,7 +508,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
         private void UpdateHitObjects()
         {
             // stop rendering hitobjects outside range
-            bool shouldRemove(GameplayHitObjectKeysInfo info)
+            bool removeIfNotVisible(GameplayHitObjectKeysInfo info)
             {
                 if (info.State == HitObjectState.Removed || !HitObjectInRange(info))
                 {
@@ -521,7 +523,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.Keys.HitObjects
                 return false;
             }
 
-            RenderedHitObjectInfos.RemoveWhere(info => shouldRemove(info));
+            RenderedHitObjectInfos.RemoveWhere(info => removeIfNotVisible(info));
 
             // start rendering new hitobjects in range
             InRangeHitObjectInfos.Clear();
