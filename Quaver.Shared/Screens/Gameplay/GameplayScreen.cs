@@ -368,7 +368,7 @@ namespace Quaver.Shared.Screens.Gameplay
             bool isCalibratingOffset = false, SpectatorClient spectatorClient = null, TournamentPlayerOptions options = null, bool isSongSelectPreview = false,
             bool isTestPlayingInNewEditor = false)
         {
-            map = map.ScaleSVs((float)ConfigManager.SvScale.Value / 100);
+            map = map.WithScaledSVs((float)ConfigManager.SvScale.Value / 100);
 
             if (isPlayTesting && !isSongSelectPreview)
             {
