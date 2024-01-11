@@ -262,7 +262,7 @@ namespace Quaver.Shared.Graphics.Playercards
                 Size = new ScalableVector2(110, 25),
             };
 
-            ViewProfileButton.Clicked += (sender, args) => BrowserHelper.OpenURL($"https://quavergame.com/profile/{User?.OnlineUser?.Id}");
+            ViewProfileButton.Clicked += (sender, args) => BrowserHelper.OpenURL($"{OnlineClient.WEBSITE_URL}/profile/{User?.OnlineUser?.Id}");
         }
 
         /// <summary>

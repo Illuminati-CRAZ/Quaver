@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Xna.Framework.Media;
 using Quaver.API.Enums;
 using Quaver.API.Maps.Parsers;
+using Quaver.Server.Client;
 using Quaver.Shared.Config;
 using Quaver.Shared.Database.Maps;
 using Quaver.Shared.Helpers;
@@ -168,6 +169,6 @@ namespace Quaver.Shared.Database.Playlists
             return missing;
         }
 
-        public void OpenUrl() => BrowserHelper.OpenURL($"https://quavergame.com/playlist/{OnlineMapPoolId}");
+        public void OpenUrl() => BrowserHelper.OpenURL($"{OnlineClient.WEBSITE_URL}/playlist/{OnlineMapPoolId}");
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Quaver.Server.Client;
 using Quaver.Shared.Graphics;
 using Quaver.Shared.Graphics.Form.Dropdowns.RightClick;
 using Quaver.Shared.Graphics.Notifications;
@@ -55,7 +56,7 @@ namespace Quaver.Shared.Screens.Downloading.UI.Mapsets
                         MapsetDownloadManager.Download(Mapset.Id, Mapset.Artist, Mapset.Title);
                         break;
                     case OnlineListing:
-                        BrowserHelper.OpenURL($"https://quavergame.com/mapsets/{Mapset.Id}");
+                        BrowserHelper.OpenURL($"{OnlineClient.WEBSITE_URL}/mapsets/{Mapset.Id}");
                         break;
                 }
             };

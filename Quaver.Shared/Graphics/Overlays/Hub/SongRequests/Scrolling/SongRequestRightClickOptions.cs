@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Quaver.Server.Client;
 using Quaver.Server.Common.Objects.Twitch;
 using Quaver.Shared.Database.Maps;
 using Quaver.Shared.Graphics.Form.Dropdowns.RightClick;
@@ -80,7 +81,7 @@ namespace Quaver.Shared.Graphics.Overlays.Hub.SongRequests.Scrolling
             switch ((MapGame) Request.Game)
             {
                 case MapGame.Quaver:
-                    BrowserHelper.OpenURL($"https://quavergame.com/mapsets/{Request.MapsetId}");
+                    BrowserHelper.OpenURL($"{OnlineClient.WEBSITE_URL}/mapsets/{Request.MapsetId}");
                     break;
                 case MapGame.Osu:
                     BrowserHelper.OpenURL($"https://osu.ppy.sh/beatmapsets/{Request.MapsetId}");

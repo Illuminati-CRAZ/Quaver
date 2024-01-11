@@ -173,7 +173,7 @@ namespace Quaver.Shared.Online.API.MapsetSearch
             try
             {
                 //var endpoint = "http://localhost:8082/v1/";
-                var endpoint = "https://api.quavergame.com/v1/";
+                var endpoint = $"{OnlineClient.API_ENDPOINT}/v1/";
 
                 var request = new RestRequest($"{endpoint}mapsets/maps/search", Method.GET);
                 var client = new RestClient(endpoint) { UserAgent = "Quaver" };

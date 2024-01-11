@@ -1,4 +1,5 @@
 using Quaver.API.Enums;
+using Quaver.Server.Client;
 using Quaver.Shared.Assets;
 using Quaver.Shared.Config;
 using Quaver.Shared.Helpers;
@@ -12,7 +13,7 @@ namespace Quaver.Shared.Graphics.Menu.Border.Components.Buttons
             FontManager.GetWobbleFont(Fonts.LatoBlack),"Leaderboards", (sender, args) =>
             {
                 var mode = ConfigManager.SelectedGameMode?.Value ?? GameMode.Keys4;
-                BrowserHelper.OpenURL($"https://quavergame.com/leaderboard/?mode={(int) mode}");
+                BrowserHelper.OpenURL($"{OnlineClient.WEBSITE_URL}/leaderboard/?mode={(int) mode}");
             })
         {
         }

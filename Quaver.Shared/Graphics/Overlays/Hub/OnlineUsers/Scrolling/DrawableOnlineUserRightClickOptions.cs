@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using Quaver.Server.Client;
 using Quaver.Server.Client.Structures;
 using Quaver.Server.Common.Enums;
 using Quaver.Server.Common.Objects.Multiplayer;
@@ -54,7 +55,7 @@ namespace Quaver.Shared.Graphics.Overlays.Hub.OnlineUsers.Scrolling
                 switch (args.Text)
                 {
                     case ViewProfile:
-                        BrowserHelper.OpenURL($"https://quavergame.com/profile/{user.OnlineUser.Id}");
+                        BrowserHelper.OpenURL($"{OnlineClient.WEBSITE_URL}/profile/{user.OnlineUser.Id}");
                         break;
                     case SteamProfile:
                         BrowserHelper.OpenURL($"https://steamcommunity.com/profiles/{user.OnlineUser?.SteamId}");
