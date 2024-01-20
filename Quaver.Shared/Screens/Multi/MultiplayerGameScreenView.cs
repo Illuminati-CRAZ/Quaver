@@ -6,6 +6,7 @@ using Quaver.Shared.Database.Profiles;
 using Quaver.Shared.Graphics.Menu.Border;
 using Quaver.Shared.Helpers;
 using Quaver.Shared.Screens.Menu.UI.Navigation.User;
+using Quaver.Shared.Screens.Menu.UI.Panels;
 using Quaver.Shared.Screens.Multi.UI.Chat;
 using Quaver.Shared.Screens.Multi.UI.Footer;
 using Quaver.Shared.Screens.Multi.UI.Players;
@@ -103,8 +104,11 @@ namespace Quaver.Shared.Screens.Multi
             CreateMapPreview();
             CreateProfile();
 
+            Panels.Add(LeftPanels.MultiplayerMatchSettings, MatchSettings);
             Panels.Add(LeftPanels.Leaderboard, Leaderboard);
+            Panels.Add(LeftPanels.Modifiers, Modifiers);
             Panels.Add(LeftPanels.MapPreview, MapPreview);
+            Panels.Add(LeftPanels.UserProfile, Profile);
 
             StatusPanel.Parent = Container;
             Header.Parent = Container;

@@ -10,6 +10,7 @@ namespace Quaver.Shared.Screens.Selection.UI
         Modifiers = 1 << 1,
         MatchSettings = 1 << 2,
         MapPreview = 1 << 3,
-        UserProfile = 1 << 4
+        UserProfile = 1 << 4,
+        MultiplayerMatchSettings = 1 << 5
     }
 }
