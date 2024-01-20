@@ -104,7 +104,7 @@ namespace Quaver.Shared.Screens.Multi
             CreateMapPreview();
             CreateProfile();
 
-            Panels.Add(LeftPanels.MultiplayerMatchSettings, MatchSettings);
+            Panels.Add(LeftPanels.MatchSettings, MatchSettings);
             Panels.Add(LeftPanels.Leaderboard, Leaderboard);
             Panels.Add(LeftPanels.Modifiers, Modifiers);
             Panels.Add(LeftPanels.MapPreview, MapPreview);
