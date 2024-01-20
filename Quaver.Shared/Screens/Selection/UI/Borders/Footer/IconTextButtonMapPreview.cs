@@ -8,7 +8,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Borders.Footer
 {
     public class IconTextButtonMapPreview : IconTextButton
     {
-        public IconTextButtonMapPreview(Bindable<SelectContainerPanel> activeLeftPanel)
+        public IconTextButtonMapPreview(Bindable<LeftPanels> activeLeftPanel)
             : base(FontAwesome.Get(FontAwesomeIcon.fa_eye_open), FontManager.GetWobbleFont(Fonts.LatoBlack),
                 "View Map", (sender, args) =>
                 {
@@ -17,15 +17,15 @@ namespace Quaver.Shared.Screens.Selection.UI.Borders.Footer
 
                     var game = (QuaverGame)GameBase.Game;
 
-                    if (activeLeftPanel.Value == SelectContainerPanel.MapPreview)
+                    if (activeLeftPanel.Value == LeftPanels.MapPreview)
                     {
                         if (game.CurrentScreen.Type == QuaverScreenType.Multiplayer)
-                            activeLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                            activeLeftPanel.Value = LeftPanels.MatchSettings;
                         else
-                            activeLeftPanel.Value = SelectContainerPanel.Leaderboard;
+                            activeLeftPanel.Value = LeftPanels.Leaderboard;
                     }
                     else
-                        activeLeftPanel.Value = SelectContainerPanel.MapPreview;
+                        activeLeftPanel.Value = LeftPanels.MapPreview;
                 })
         {
         }

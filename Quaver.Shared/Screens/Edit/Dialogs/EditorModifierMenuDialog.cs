@@ -14,7 +14,7 @@ namespace Quaver.Shared.Screens.Edit.Dialogs
     {
         private ModifierSelectorContainer Modifiers { get; set; }
 
-        private Bindable<SelectContainerPanel> Bindable { get; } = new Bindable<SelectContainerPanel>(SelectContainerPanel.Modifiers);
+        private Bindable<LeftPanels> Bindable { get; } = new Bindable<LeftPanels>(LeftPanels.Modifiers);
 
         public EditorModifierMenuDialog() : base(0)
         {

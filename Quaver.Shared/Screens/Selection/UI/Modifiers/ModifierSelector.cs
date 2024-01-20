@@ -25,7 +25,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Modifiers
 
         /// <summary>
         /// </summary>
-        private Bindable<SelectContainerPanel> ActiveLeftPanel { get; }
+        private Bindable<LeftPanels> ActiveLeftPanel { get; }
 
         /// <summary>
         /// </summary>
@@ -50,7 +50,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Modifiers
         /// <param name="activeLeftPanel"></param>
         /// <param name="size"></param>
         /// <param name="sections"></param>
-        public ModifierSelector(Bindable<SelectContainerPanel> activeLeftPanel, ScalableVector2 size, List<ModifierSection> sections) : base(size, size)
+        public ModifierSelector(Bindable<LeftPanels> activeLeftPanel, ScalableVector2 size, List<ModifierSection> sections) : base(size, size)
         {
             ActiveLeftPanel = activeLeftPanel;
             Sections = sections;
@@ -143,10 +143,10 @@ namespace Quaver.Shared.Screens.Selection.UI.Modifiers
                 {
                     case QuaverScreenType.Editor:
                     case QuaverScreenType.Select:
-                        ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+                        ActiveLeftPanel.Value = LeftPanels.Leaderboard;
                         break;
                     case QuaverScreenType.Multiplayer:
-                        ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                        ActiveLeftPanel.Value = LeftPanels.MatchSettings;
                         break;
                 }
             })

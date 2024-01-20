@@ -35,7 +35,7 @@ using Wobble.Window;
 
 namespace Quaver.Shared.Screens.Selection
 {
-    public class SelectionScreenView : ScreenView
+    public class SelectionScreenView : LeftPanelScreenView
     {
         /// <summary>
         /// </summary>
@@ -125,7 +125,12 @@ namespace Quaver.Shared.Screens.Selection
             CreateModifierSelectorContainer();
             CreateUserProfileContainer();
 
-            SelectScreen.ActiveLeftPanel.ValueChanged += OnActiveLeftPanelChanged;
+            Panels.Add(LeftPanels.Leaderboard, LeaderboardContainer);
+            Panels.Add(LeftPanels.Modifiers, ModifierSelector);
+            Panels.Add(LeftPanels.MapPreview, MapPreviewContainer);
+            Panels.Add(LeftPanels.UserProfile, ProfileContainer);
+
+            // SelectScreen.ActiveLeftPanel.ValueChanged += OnActiveLeftPanelChanged;
             SelectScreen.AvailableMapsets.ValueChanged += OnAvailableMapsetsChanged;
             SelectScreen.ActiveScrollContainer.ValueChanged += OnActiveScrollContainerChanged;
             MapsetContainer.ContainerInitialized += OnMapsetContainerInitialized;
@@ -165,7 +170,7 @@ namespace Quaver.Shared.Screens.Selection
             Container?.Destroy();
 
             // ReSharper disable twice DelegateSubtraction
-            SelectScreen.ActiveLeftPanel.ValueChanged -= OnActiveLeftPanelChanged;
+            // SelectScreen.ActiveLeftPanel.ValueChanged -= OnActiveLeftPanelChanged;
             MapsetContainer.ContainerInitialized -= OnMapsetContainerInitialized;
             ConfigManager.SelectGroupMapsetsBy.ValueChanged -= OnGroupingChanged;
             PlaylistManager.PlaylistCreated -= OnPlaylistCreated;
@@ -335,50 +340,67 @@ namespace Quaver.Shared.Screens.Selection
             PlaylistContainer.InitializePlaylists(false);
         }
 
+        // public override void CreatePanels()
+        // {
+        //     // some panels' positions depend on these being made first
+        //     CreateHeader();
+        //     CreateFilterPanel();
+
+        //     CreateLeaderboardContainer();
+        //     CreateModifierSelectorContainer();
+        //     CreateMapPreviewContainer();
+        //     CreateUserProfileContainer();
+
+        //     Panels.Add(LeftPanels.Leaderboard, LeaderboardContainer);
+        //     Panels.Add(LeftPanels.Modifiers, ModifierSelector);
+        //     Panels.Add(LeftPanels.MapPreview, MapPreviewContainer);
+        //     Panels.Add(LeftPanels.UserProfile, ProfileContainer);
+        // }
+
         /// <summary>
         ///     Handles animations when the active left panel has changed
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnActiveLeftPanelChanged(object sender, BindableValueChangedEventArgs<SelectContainerPanel> e)
-        {
-            LeaderboardContainer.ClearAnimations();
-            ModifierSelector.ClearAnimations();
+        // private void OnActiveLeftPanelChanged(object sender, BindableValueChangedEventArgs<LeftPanels> e)
+        // {
+        //     LeaderboardContainer.ClearAnimations();
+        //     ModifierSelector.ClearAnimations();
 
-            const int animTime = 400;
-            const Easing easing = Easing.OutQuint;
-            var inactivePos = -LeaderboardContainer.Width - ScreenPaddingX;
+        //     const int animTime = 400;
+        //     const Easing easing = Easing.OutQuint;
+        //     var inactivePos = -LeaderboardContainer.Width - ScreenPaddingX;
 
-            switch (e.Value)
-            {
-                case SelectContainerPanel.Leaderboard:
-                    LeaderboardContainer.MoveToX(ScreenPaddingX, easing, animTime);
-                    MapPreviewContainer.MoveToX(inactivePos, easing, animTime);
-                    ModifierSelector.MoveToX(inactivePos, easing, animTime);
-                    ProfileContainer.MoveToX(inactivePos, easing, animTime);
-                    break;
-                case SelectContainerPanel.Modifiers:
-                    LeaderboardContainer.MoveToX(inactivePos, easing, animTime);
-                    MapPreviewContainer.MoveToX(inactivePos, easing, animTime);
-                    ModifierSelector.MoveToX(ScreenPaddingX, easing, animTime);
-                    ProfileContainer.MoveToX(inactivePos, easing, animTime);
-                    break;
-                case SelectContainerPanel.MapPreview:
-                    LeaderboardContainer.MoveToX(inactivePos, easing, animTime);
-                    ModifierSelector.MoveToX(inactivePos, easing, animTime);
-                    MapPreviewContainer.MoveToX(ScreenPaddingX, easing, animTime);
-                    ProfileContainer.MoveToX(inactivePos, easing, animTime);
-                    break;
-                case SelectContainerPanel.UserProfile:
-                    LeaderboardContainer.MoveToX(inactivePos, easing, animTime);
-                    ModifierSelector.MoveToX(inactivePos, easing, animTime);
-                    MapPreviewContainer.MoveToX(inactivePos, easing, animTime);
-                    ProfileContainer.MoveToX(ScreenPaddingX, easing, animTime);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+        //     switch (e.Value)
+        //     {
+        //         case LeftPanels.Leaderboard:
+        //             LeaderboardContainer.MoveToX(ScreenPaddingX, easing, animTime);
+        //             MapPreviewContainer.MoveToX(inactivePos, easing, animTime);
+        //             ModifierSelector.MoveToX(inactivePos, easing, animTime);
+        //             ProfileContainer.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         case LeftPanels.Modifiers:
+        //             LeaderboardContainer.MoveToX(inactivePos, easing, animTime);
+        //             MapPreviewContainer.MoveToX(inactivePos, easing, animTime);
+        //             ModifierSelector.MoveToX(ScreenPaddingX, easing, animTime);
+        //             ProfileContainer.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         case LeftPanels.MapPreview:
+        //             LeaderboardContainer.MoveToX(inactivePos, easing, animTime);
+        //             ModifierSelector.MoveToX(inactivePos, easing, animTime);
+        //             MapPreviewContainer.MoveToX(ScreenPaddingX, easing, animTime);
+        //             ProfileContainer.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         case LeftPanels.UserProfile:
+        //             LeaderboardContainer.MoveToX(inactivePos, easing, animTime);
+        //             ModifierSelector.MoveToX(inactivePos, easing, animTime);
+        //             MapPreviewContainer.MoveToX(inactivePos, easing, animTime);
+        //             ProfileContainer.MoveToX(ScreenPaddingX, easing, animTime);
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException();
+        //     }
+        // }
 
         /// <summary>
         ///     Called when new available mapsets are changed.

@@ -235,7 +235,7 @@ namespace Quaver.Shared.Screens.Edit
 
         /// <summary>
         /// </summary>
-        public Bindable<SelectContainerPanel> ActiveLeftPanel { get; set; } = new Bindable<SelectContainerPanel>(SelectContainerPanel.MapPreview);
+        public Bindable<LeftPanels> ActiveLeftPanel { get; set; } = new Bindable<LeftPanels>(LeftPanels.MapPreview);
 
         /// <summary>
         /// </summary>
@@ -775,13 +775,13 @@ namespace Quaver.Shared.Screens.Edit
 
             if (KeyboardManager.IsUniqueKeyPress(Keys.I))
                 PlaceTimingPointOrScrollVelocity();
-            
+
             if (KeyboardManager.IsUniqueKeyPress(Keys.B))
                 DialogManager.Show(new EditorBookmarkDialog(ActionManager, Track, null));
-            
+
             if (KeyboardManager.IsUniqueKeyPress(Keys.Left))
                 SeekToNearestBookmark(Direction.Backward);
-            
+
             if (KeyboardManager.IsUniqueKeyPress(Keys.Right))
                 SeekToNearestBookmark(Direction.Forward);
         }
@@ -1406,7 +1406,7 @@ namespace Quaver.Shared.Screens.Edit
         {
             if (WorkingMap.Bookmarks.Count == 0)
                 return;
-            
+
             BookmarkInfo nextBookmark = null;
 
             var closest = WorkingMap.Bookmarks.OrderBy(x => Math.Abs(x.StartTime - Track.Time)).First();
@@ -1432,10 +1432,10 @@ namespace Quaver.Shared.Screens.Edit
 
             if (nextBookmark == null)
                 return;
-            
+
             Track.Seek(Math.Clamp(nextBookmark.StartTime, 0, Track.Length));
         }
-        
+
         /// <summary>
         ///     Creates a new mapset from an audio file
         /// </summary>

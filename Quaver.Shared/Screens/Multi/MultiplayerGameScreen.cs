@@ -44,7 +44,7 @@ namespace Quaver.Shared.Screens.Multi
         /// <summary>
         ///     The currently active panel on the left side of the screen
         /// </summary>
-        public Bindable<SelectContainerPanel> ActiveLeftPanel { get; set; }
+        public Bindable<LeftPanels> ActiveLeftPanel { get; set; }
 
         /// <summary>
         ///     Keeps track of if the user is play testing in the map preview
@@ -106,7 +106,7 @@ namespace Quaver.Shared.Screens.Multi
 
             MapLoadingScreen.AddModsFromIdentifiers(OnlineManager.GetSelfActivatedMods());
             OnlineManager.SendGameDifficultyRatings(OnlineManager.CurrentGame.MapMd5, OnlineManager.CurrentGame.AlternativeMd5);
-            
+
             base.OnFirstUpdate();
         }
 
@@ -158,9 +158,9 @@ namespace Quaver.Shared.Screens.Multi
         /// </summary>
         private void InitializeActiveLeftPanelBindable()
         {
-            ActiveLeftPanel = new Bindable<SelectContainerPanel>(SelectContainerPanel.MatchSettings)
+            ActiveLeftPanel = new Bindable<LeftPanels>(LeftPanels.MatchSettings)
             {
-                Value = SelectContainerPanel.MatchSettings
+                Value = LeftPanels.MatchSettings
             };
         }
 
@@ -239,8 +239,8 @@ namespace Quaver.Shared.Screens.Multi
 
             if (KeyboardManager.IsUniqueKeyPress(Keys.Escape))
             {
-                if (ActiveLeftPanel.Value != SelectContainerPanel.MatchSettings)
-                    ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                if (ActiveLeftPanel.Value != LeftPanels.MatchSettings)
+                    ActiveLeftPanel.Value = LeftPanels.MatchSettings;
                 else
                 {
                     Exit(() => new MultiplayerLobbyScreen());
@@ -248,7 +248,7 @@ namespace Quaver.Shared.Screens.Multi
                 }
             }
 
-            if (KeyboardManager.IsUniqueKeyPress(Keys.Tab) && ActiveLeftPanel.Value == SelectContainerPanel.Leaderboard)
+            if (KeyboardManager.IsUniqueKeyPress(Keys.Tab) && ActiveLeftPanel.Value == LeftPanels.Leaderboard)
                 SelectionScreen.HandleKeyPressTab();
 
             HandleKeyPressControlInput();
@@ -305,40 +305,40 @@ namespace Quaver.Shared.Screens.Multi
         /// </summary>
         private void HandleKeyPressF1()
         {
-            if (ActiveLeftPanel.Value != SelectContainerPanel.Modifiers)
-                ActiveLeftPanel.Value = SelectContainerPanel.Modifiers;
+            if (ActiveLeftPanel.Value != LeftPanels.Modifiers)
+                ActiveLeftPanel.Value = LeftPanels.Modifiers;
             else
-                ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
         }
 
         /// <summary>
         /// </summary>
         private void HandleKeyPressF2()
         {
-            if (ActiveLeftPanel.Value != SelectContainerPanel.Leaderboard)
-                ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+            if (ActiveLeftPanel.Value != LeftPanels.Leaderboard)
+                ActiveLeftPanel.Value = LeftPanels.Leaderboard;
             else
-                ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
         }
 
         /// <summary>
         /// </summary>
         private void HandleKeyPressF3()
         {
-            if (ActiveLeftPanel.Value != SelectContainerPanel.MapPreview)
-                ActiveLeftPanel.Value = SelectContainerPanel.MapPreview;
+            if (ActiveLeftPanel.Value != LeftPanels.MapPreview)
+                ActiveLeftPanel.Value = LeftPanels.MapPreview;
             else
-                ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
         }
 
         /// <summary>
         /// </summary>
         private void HandleKeyPressF4()
         {
-            if (ActiveLeftPanel.Value != SelectContainerPanel.UserProfile)
-                ActiveLeftPanel.Value = SelectContainerPanel.UserProfile;
+            if (ActiveLeftPanel.Value != LeftPanels.UserProfile)
+                ActiveLeftPanel.Value = LeftPanels.UserProfile;
             else
-                ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
         }
 
         /// <summary>

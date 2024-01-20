@@ -14,10 +14,10 @@ namespace Quaver.Shared.Screens.Multi.UI.Footer
             : base(FontAwesome.Get(FontAwesomeIcon.fa_open_wrench_tool_silhouette),
                 FontManager.GetWobbleFont(Fonts.LatoBlack),"Modifiers", (sender, args) =>
                 {
-                    if (screen.ActiveLeftPanel.Value == SelectContainerPanel.Modifiers)
-                        screen.ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                    if (screen.ActiveLeftPanel.Value == LeftPanels.Modifiers)
+                        screen.ActiveLeftPanel.Value = LeftPanels.MatchSettings;
                     else
-                        screen.ActiveLeftPanel.Value = SelectContainerPanel.Modifiers;
+                        screen.ActiveLeftPanel.Value = LeftPanels.Modifiers;
                 })
         {
         }

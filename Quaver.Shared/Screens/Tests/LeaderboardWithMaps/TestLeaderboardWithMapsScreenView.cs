@@ -30,7 +30,7 @@ namespace Quaver.Shared.Screens.Tests.LeaderboardWithMaps
 
         private Bindable<SelectScrollContainerType> ActiveScrollContainer { get; }
 
-        private Bindable<SelectContainerPanel> ActivePanel { get; }
+        private Bindable<LeftPanels> ActivePanel { get; }
 
         private ModifierSelectorContainer ModifierSelector { get; }
 
@@ -102,9 +102,9 @@ namespace Quaver.Shared.Screens.Tests.LeaderboardWithMaps
 
             ModifierSelector.X = -ModifierSelector.Width - 50;
 
-            ActivePanel = new Bindable<SelectContainerPanel>(SelectContainerPanel.Leaderboard)
+            ActivePanel = new Bindable<LeftPanels>(LeftPanels.Leaderboard)
             {
-                Value = SelectContainerPanel.Leaderboard
+                Value = LeftPanels.Leaderboard
             };
 
             ActivePanel.ValueChanged += OnActivePanelChanged;
@@ -116,12 +116,12 @@ namespace Quaver.Shared.Screens.Tests.LeaderboardWithMaps
             {
                 switch (ActivePanel.Value)
                 {
-                    case SelectContainerPanel.Leaderboard:
+                    case LeftPanels.Leaderboard:
                         if (ActiveScrollContainer.Value == SelectScrollContainerType.Maps)
                             ActiveScrollContainer.Value = SelectScrollContainerType.Mapsets;
                         break;
-                    case SelectContainerPanel.Modifiers:
-                        ActivePanel.Value = SelectContainerPanel.Leaderboard;
+                    case LeftPanels.Modifiers:
+                        ActivePanel.Value = LeftPanels.Leaderboard;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -134,8 +134,8 @@ namespace Quaver.Shared.Screens.Tests.LeaderboardWithMaps
                     ActiveScrollContainer.Value = SelectScrollContainerType.Maps;
             }
 
-            if (KeyboardManager.IsUniqueKeyPress(Keys.F1) && ActivePanel.Value != SelectContainerPanel.Modifiers)
-                ActivePanel.Value = SelectContainerPanel.Modifiers;
+            if (KeyboardManager.IsUniqueKeyPress(Keys.F1) && ActivePanel.Value != LeftPanels.Modifiers)
+                ActivePanel.Value = LeftPanels.Modifiers;
 
             base.Update(gameTime);
         }
@@ -152,7 +152,7 @@ namespace Quaver.Shared.Screens.Tests.LeaderboardWithMaps
             base.Destroy();
         }
 
-        private void OnActivePanelChanged(object sender, BindableValueChangedEventArgs<SelectContainerPanel> e)
+        private void OnActivePanelChanged(object sender, BindableValueChangedEventArgs<LeftPanels> e)
         {
             LeaderboardContainer.ClearAnimations();
             ModifierSelector.ClearAnimations();
@@ -163,11 +163,11 @@ namespace Quaver.Shared.Screens.Tests.LeaderboardWithMaps
 
             switch (e.Value)
             {
-                case SelectContainerPanel.Leaderboard:
+                case LeftPanels.Leaderboard:
                     LeaderboardContainer.MoveToX(activePos, Easing.OutQuint, animTime);
                     ModifierSelector.MoveToX(inactivePos, Easing.OutQuint, animTime);
                     break;
-                case SelectContainerPanel.Modifiers:
+                case LeftPanels.Modifiers:
                     LeaderboardContainer.MoveToX(inactivePos, Easing.OutQuint, animTime);
                     ModifierSelector.MoveToX(activePos, Easing.OutQuint, animTime);
                     break;

@@ -28,7 +28,7 @@ using Wobble.Window;
 
 namespace Quaver.Shared.Screens.Multi
 {
-    public class MultiplayerGameScreenView : ScreenView
+    public class MultiplayerGameScreenView : LeftPanelScreenView
     {
         /// <summary>
         /// </summary>
@@ -103,11 +103,14 @@ namespace Quaver.Shared.Screens.Multi
             CreateMapPreview();
             CreateProfile();
 
+            Panels.Add(LeftPanels.Leaderboard, Leaderboard);
+            Panels.Add(LeftPanels.MapPreview, MapPreview);
+
             StatusPanel.Parent = Container;
             Header.Parent = Container;
             Footer.Parent = Container;
 
-            GameScreen.ActiveLeftPanel.ValueChanged += OnActiveLeftPanelChanged;
+            // GameScreen.ActiveLeftPanel.ValueChanged += OnActiveLeftPanelChanged;
         }
 
         /// <inheritdoc />
@@ -255,56 +258,56 @@ namespace Quaver.Shared.Screens.Multi
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnActiveLeftPanelChanged(object sender, BindableValueChangedEventArgs<SelectContainerPanel> e)
-        {
-            Leaderboard.ClearAnimations();
-            MatchSettings.ClearAnimations();
-            Modifiers.ClearAnimations();
+        // private void OnActiveLeftPanelChanged(object sender, BindableValueChangedEventArgs<LeftPanels> e)
+        // {
+        //     Leaderboard.ClearAnimations();
+        //     MatchSettings.ClearAnimations();
+        //     Modifiers.ClearAnimations();
 
-            const int animTime = 400;
-            const Easing easing = Easing.OutQuint;
-            var inactivePos = -Leaderboard.Width - ScreenPaddingX;
+        //     const int animTime = 400;
+        //     const Easing easing = Easing.OutQuint;
+        //     var inactivePos = -Leaderboard.Width - ScreenPaddingX;
 
-            switch (e.Value)
-            {
-                case SelectContainerPanel.Leaderboard:
-                    Leaderboard.MoveToX(ScreenPaddingX, easing, animTime);
-                    MatchSettings.MoveToX(inactivePos, easing, animTime);
-                    Modifiers.MoveToX(inactivePos, easing, animTime);
-                    MapPreview.MoveToX(inactivePos, easing, animTime);
-                    Profile.MoveToX(inactivePos, easing, animTime);
-                    break;
-                case SelectContainerPanel.MatchSettings:
-                    MatchSettings.MoveToX(ScreenPaddingX, easing, animTime);
-                    Leaderboard.MoveToX(inactivePos, easing, animTime);
-                    Modifiers.MoveToX(inactivePos, easing, animTime);
-                    MapPreview.MoveToX(inactivePos, easing, animTime);
-                    Profile.MoveToX(inactivePos, easing, animTime);
-                    break;
-                case SelectContainerPanel.Modifiers:
-                    Modifiers.MoveToX(ScreenPaddingX, easing, animTime);
-                    MatchSettings.MoveToX(inactivePos, easing, animTime);
-                    Leaderboard.MoveToX(inactivePos, easing, animTime);
-                    MapPreview.MoveToX(inactivePos, easing, animTime);
-                    Profile.MoveToX(inactivePos, easing, animTime);
-                    break;
-                case SelectContainerPanel.MapPreview:
-                    MapPreview.MoveToX(ScreenPaddingX, easing, animTime);
-                    MatchSettings.MoveToX(inactivePos, easing, animTime);
-                    Leaderboard.MoveToX(inactivePos, easing, animTime);
-                    Modifiers.MoveToX(inactivePos, easing, animTime);
-                    Profile.MoveToX(inactivePos, easing, animTime);
-                    break;
-                case SelectContainerPanel.UserProfile:
-                    Profile.MoveToX(ScreenPaddingX, easing, animTime);
-                    MatchSettings.MoveToX(inactivePos, easing, animTime);
-                    Leaderboard.MoveToX(inactivePos, easing, animTime);
-                    Modifiers.MoveToX(inactivePos, easing, animTime);
-                    MapPreview.MoveToX(inactivePos, easing, animTime);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+        //     switch (e.Value)
+        //     {
+        //         case LeftPanels.Leaderboard:
+        //             Leaderboard.MoveToX(ScreenPaddingX, easing, animTime);
+        //             MatchSettings.MoveToX(inactivePos, easing, animTime);
+        //             Modifiers.MoveToX(inactivePos, easing, animTime);
+        //             MapPreview.MoveToX(inactivePos, easing, animTime);
+        //             Profile.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         case LeftPanels.MatchSettings:
+        //             MatchSettings.MoveToX(ScreenPaddingX, easing, animTime);
+        //             Leaderboard.MoveToX(inactivePos, easing, animTime);
+        //             Modifiers.MoveToX(inactivePos, easing, animTime);
+        //             MapPreview.MoveToX(inactivePos, easing, animTime);
+        //             Profile.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         case LeftPanels.Modifiers:
+        //             Modifiers.MoveToX(ScreenPaddingX, easing, animTime);
+        //             MatchSettings.MoveToX(inactivePos, easing, animTime);
+        //             Leaderboard.MoveToX(inactivePos, easing, animTime);
+        //             MapPreview.MoveToX(inactivePos, easing, animTime);
+        //             Profile.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         case LeftPanels.MapPreview:
+        //             MapPreview.MoveToX(ScreenPaddingX, easing, animTime);
+        //             MatchSettings.MoveToX(inactivePos, easing, animTime);
+        //             Leaderboard.MoveToX(inactivePos, easing, animTime);
+        //             Modifiers.MoveToX(inactivePos, easing, animTime);
+        //             Profile.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         case LeftPanels.UserProfile:
+        //             Profile.MoveToX(ScreenPaddingX, easing, animTime);
+        //             MatchSettings.MoveToX(inactivePos, easing, animTime);
+        //             Leaderboard.MoveToX(inactivePos, easing, animTime);
+        //             Modifiers.MoveToX(inactivePos, easing, animTime);
+        //             MapPreview.MoveToX(inactivePos, easing, animTime);
+        //             break;
+        //         default:
+        //             throw new ArgumentOutOfRangeException();
+        //     }
+        // }
     }
 }

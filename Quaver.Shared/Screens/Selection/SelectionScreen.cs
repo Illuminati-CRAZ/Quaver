@@ -72,7 +72,7 @@ namespace Quaver.Shared.Screens.Selection
         /// <summary>
         ///     The currently active panel on the left side of the screen
         /// </summary>
-        public Bindable<SelectContainerPanel> ActiveLeftPanel { get; set; }
+        public Bindable<LeftPanels> ActiveLeftPanel { get; set; }
 
         /// <summary>
         ///     The currently active scroll container on the right-side of the screen
@@ -204,9 +204,9 @@ namespace Quaver.Shared.Screens.Selection
         /// </summary>
         private void InitializeActiveLeftPanelBindable()
         {
-            ActiveLeftPanel = new Bindable<SelectContainerPanel>(SelectContainerPanel.Leaderboard)
+            ActiveLeftPanel = new Bindable<LeftPanels>(LeftPanels.Leaderboard)
             {
-                Value = SelectContainerPanel.Leaderboard
+                Value = LeftPanels.Leaderboard
             };
         }
 
@@ -266,7 +266,7 @@ namespace Quaver.Shared.Screens.Selection
             HandleKeyPressControlInput();
             HandleThumb1MouseButtonClick();
 
-            if (ActiveLeftPanel.Value == SelectContainerPanel.Leaderboard)
+            if (ActiveLeftPanel.Value == LeftPanels.Leaderboard)
                 HandleKeyPressTab();
         }
 
@@ -289,10 +289,10 @@ namespace Quaver.Shared.Screens.Selection
             if (!KeyboardManager.IsUniqueKeyPress(Keys.F1))
                 return;
 
-            if (ActiveLeftPanel.Value == SelectContainerPanel.Modifiers)
-                ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+            if (ActiveLeftPanel.Value == LeftPanels.Modifiers)
+                ActiveLeftPanel.Value = LeftPanels.Leaderboard;
             else
-                ActiveLeftPanel.Value = SelectContainerPanel.Modifiers;
+                ActiveLeftPanel.Value = LeftPanels.Modifiers;
         }
 
         /// <summary>
@@ -320,10 +320,10 @@ namespace Quaver.Shared.Screens.Selection
             if (!KeyboardManager.IsUniqueKeyPress(Keys.F3))
                 return;
 
-            if (ActiveLeftPanel.Value == SelectContainerPanel.MapPreview)
-                ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+            if (ActiveLeftPanel.Value == LeftPanels.MapPreview)
+                ActiveLeftPanel.Value = LeftPanels.Leaderboard;
             else
-                ActiveLeftPanel.Value = SelectContainerPanel.MapPreview;
+                ActiveLeftPanel.Value = LeftPanels.MapPreview;
         }
 
         /// <summary>
@@ -336,10 +336,10 @@ namespace Quaver.Shared.Screens.Selection
             if (!KeyboardManager.IsUniqueKeyPress(Keys.F4))
                 return;
 
-            if (ActiveLeftPanel.Value == SelectContainerPanel.UserProfile)
-                ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+            if (ActiveLeftPanel.Value == LeftPanels.UserProfile)
+                ActiveLeftPanel.Value = LeftPanels.Leaderboard;
             else
-                ActiveLeftPanel.Value = SelectContainerPanel.UserProfile;
+                ActiveLeftPanel.Value = LeftPanels.UserProfile;
         }
 
         /// <summary>
@@ -482,8 +482,8 @@ namespace Quaver.Shared.Screens.Selection
         {
             switch (ActiveLeftPanel.Value)
             {
-                case SelectContainerPanel.Leaderboard:
-                case SelectContainerPanel.MapPreview:
+                case LeftPanels.Leaderboard:
+                case LeftPanels.MapPreview:
                     if (ActiveScrollContainer.Value == SelectScrollContainerType.Maps)
                     {
                         ActiveScrollContainer.Value = SelectScrollContainerType.Mapsets;
@@ -497,14 +497,14 @@ namespace Quaver.Shared.Screens.Selection
                         return;
                     }
 
-                    if (ActiveLeftPanel.Value == SelectContainerPanel.Leaderboard)
+                    if (ActiveLeftPanel.Value == LeftPanels.Leaderboard)
                         ExitToMenu();
 
-                    if (ActiveLeftPanel.Value == SelectContainerPanel.MapPreview)
-                        ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+                    if (ActiveLeftPanel.Value == LeftPanels.MapPreview)
+                        ActiveLeftPanel.Value = LeftPanels.Leaderboard;
                     break;
                 default:
-                    ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+                    ActiveLeftPanel.Value = LeftPanels.Leaderboard;
                     break;
             }
         }

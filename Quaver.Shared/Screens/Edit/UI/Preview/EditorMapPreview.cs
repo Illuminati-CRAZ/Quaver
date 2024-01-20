@@ -47,7 +47,7 @@ namespace Quaver.Shared.Screens.Edit.UI.Preview
         /// <param name="height"></param>
         /// <param name="track"></param>
         /// <param name="qua"></param>
-        public EditorMapPreview(EditorActionManager manager, Bindable<bool> isPlayTesting, Bindable<SelectContainerPanel> activeLeftPanel,
+        public EditorMapPreview(EditorActionManager manager, Bindable<bool> isPlayTesting, Bindable<LeftPanels> activeLeftPanel,
             int height, IAudioTrack track = null, Qua qua = null) : base(isPlayTesting, activeLeftPanel, height, track, qua)
         {
             HasSeekBar = false;

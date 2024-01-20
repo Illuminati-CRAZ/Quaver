@@ -14,10 +14,10 @@ namespace Quaver.Shared.Screens.Multi.UI.Footer
             : base(FontAwesome.Get(FontAwesomeIcon.fa_trophy),
             FontManager.GetWobbleFont(Fonts.LatoBlack),"Leaderboard", (sender, args) =>
             {
-                if (screen.ActiveLeftPanel.Value == SelectContainerPanel.Leaderboard)
-                    screen.ActiveLeftPanel.Value = SelectContainerPanel.MatchSettings;
+                if (screen.ActiveLeftPanel.Value == LeftPanels.Leaderboard)
+                    screen.ActiveLeftPanel.Value = LeftPanels.MatchSettings;
                 else
-                    screen.ActiveLeftPanel.Value = SelectContainerPanel.Leaderboard;
+                    screen.ActiveLeftPanel.Value = LeftPanels.Leaderboard;
             })
         {
         }

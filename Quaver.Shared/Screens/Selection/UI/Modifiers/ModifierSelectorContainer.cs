@@ -18,7 +18,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Modifiers
     {
         /// <summary>
         /// </summary>
-        private Bindable<SelectContainerPanel> ActiveLeftPanel { get; }
+        private Bindable<LeftPanels> ActiveLeftPanel { get; }
 
         /// <summary>
         /// </summary>
@@ -38,7 +38,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Modifiers
 
         /// <summary>
         /// </summary>
-        public ModifierSelectorContainer(Bindable<SelectContainerPanel> activeLeftPanel)
+        public ModifierSelectorContainer(Bindable<LeftPanels> activeLeftPanel)
         {
             ActiveLeftPanel = activeLeftPanel;
 
