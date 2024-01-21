@@ -1400,7 +1400,7 @@ namespace Quaver.Shared.Screens.Gameplay
             // Disable hitsounds for left panel screens if the map preview isnt active
             if (game?.CurrentScreen is IHasLeftPanel screen && IsSongSelectPreview)
             {
-                if (screen.ActiveLeftPanel.Value != LeftPanels.MapPreview)
+                if (screen.ActiveLeftPanel.Value != LeftPanel.MapPreview)
                     return;
             }
 

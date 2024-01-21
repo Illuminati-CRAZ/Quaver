@@ -14,7 +14,7 @@ namespace Quaver.Shared.Screens
 	{
 		public new IHasLeftPanel Screen { get; }
 
-		public Dictionary<LeftPanels, Sprite> Panels { get; } = new Dictionary<LeftPanels, Sprite>();
+		public Dictionary<LeftPanel, Sprite> Panels { get; } = new Dictionary<LeftPanel, Sprite>();
 
 		private const int ScreenPaddingX = 50;
 
@@ -31,7 +31,7 @@ namespace Quaver.Shared.Screens
 		// key = the LeftPanels enum value associated with the panel
 		// public abstract void CreatePanels();
 
-		private void OnActiveLeftPanelChanged(object sender, BindableValueChangedEventArgs<LeftPanels> e)
+		private void OnActiveLeftPanelChanged(object sender, BindableValueChangedEventArgs<LeftPanel> e)
 		{
 			const int animTime = 400;
 			const Easing easing = Easing.OutQuint;

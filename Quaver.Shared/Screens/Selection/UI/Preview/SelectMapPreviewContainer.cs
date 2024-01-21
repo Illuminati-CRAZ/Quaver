@@ -43,7 +43,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Preview
 
         /// <summary>
         /// </summary>
-        private Bindable<LeftPanels> ActiveLeftPanel { get; }
+        private Bindable<LeftPanel> ActiveLeftPanel { get; }
 
         /// <summary>
         /// </summary>
@@ -99,7 +99,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Preview
 
         /// <summary>
         /// </summary>
-        public SelectMapPreviewContainer(Bindable<bool> isPlayTesting, Bindable<LeftPanels> activeLeftPanel, int height,
+        public SelectMapPreviewContainer(Bindable<bool> isPlayTesting, Bindable<LeftPanel> activeLeftPanel, int height,
             IAudioTrack track = null, Qua qua = null)
         {
             IsPlayTesting = isPlayTesting;
@@ -360,7 +360,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Preview
                     LoadedGameplayScreen?.HandleReplaySeeking();
                 }
 
-                if (ActiveLeftPanel.Value == LeftPanels.MapPreview)
+                if (ActiveLeftPanel.Value == LeftPanel.MapPreview)
                     LoadedGameplayScreen?.HandleAutoplayTabInput(gameTime);
 
                 LoadedGameplayScreen?.Update(gameTime);
@@ -382,9 +382,9 @@ namespace Quaver.Shared.Screens.Selection.UI.Preview
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnLeftPanelChanged(object sender, BindableValueChangedEventArgs<LeftPanels> e)
+        private void OnLeftPanelChanged(object sender, BindableValueChangedEventArgs<LeftPanel> e)
         {
-            if (e.Value != LeftPanels.MapPreview)
+            if (e.Value != LeftPanel.MapPreview)
                 return;
 
             ShowTestPlayPrompt();
@@ -531,7 +531,7 @@ namespace Quaver.Shared.Screens.Selection.UI.Preview
         /// </summary>
         private void ShowTestPlayPrompt()
         {
-            if (ShownTestPlayPrompt || ActiveLeftPanel.Value != LeftPanels.MapPreview)
+            if (ShownTestPlayPrompt || ActiveLeftPanel.Value != LeftPanel.MapPreview)
                 return;
 
             if (LoadedGameplayScreen == null)

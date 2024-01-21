@@ -235,7 +235,7 @@ namespace Quaver.Shared.Screens.Edit
 
         /// <summary>
         /// </summary>
-        public Bindable<LeftPanels> ActiveLeftPanel { get; set; } = new Bindable<LeftPanels>(LeftPanels.MapPreview);
+        public Bindable<LeftPanel> ActiveLeftPanel { get; set; } = new Bindable<LeftPanel>(LeftPanel.MapPreview);
 
         /// <summary>
         /// </summary>

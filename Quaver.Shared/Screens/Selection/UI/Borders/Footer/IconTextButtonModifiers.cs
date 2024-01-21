@@ -13,17 +13,17 @@ namespace Quaver.Shared.Screens.Selection.UI.Borders.Footer
 {
     public class IconTextButtonModifiers : IconTextButton
     {
-        public IconTextButtonModifiers(Bindable<LeftPanels> activeLeftPanel)
+        public IconTextButtonModifiers(Bindable<LeftPanel> activeLeftPanel)
             : base(FontAwesome.Get(FontAwesomeIcon.fa_open_wrench_tool_silhouette), FontManager.GetWobbleFont(Fonts.LatoBlack),
             "Modifiers", (sender, args) =>
             {
                 if (activeLeftPanel == null)
                     return;
 
-                if (activeLeftPanel.Value == LeftPanels.Modifiers)
-                    activeLeftPanel.Value = LeftPanels.Leaderboard;
+                if (activeLeftPanel.Value == LeftPanel.Modifiers)
+                    activeLeftPanel.Value = LeftPanel.Leaderboard;
                 else
-                    activeLeftPanel.Value = LeftPanels.Modifiers;
+                    activeLeftPanel.Value = LeftPanel.Modifiers;
             })
         {
         }

@@ -26,6 +26,7 @@ using Quaver.Shared.Screens.Multi;
 using Quaver.Shared.Screens.MultiplayerLobby;
 using Quaver.Shared.Screens.Music;
 using Quaver.Shared.Screens.Selection;
+using Quaver.Shared.Screens.Selection.UI;
 using Quaver.Shared.Screens.Theater;
 using Wobble.Audio;
 using Wobble.Audio.Tracks;
@@ -37,7 +38,7 @@ using Wobble.Scheduling;
 
 namespace Quaver.Shared.Screens.Downloading
 {
-    public sealed class DownloadingScreen : QuaverScreen
+    public sealed class DownloadingScreen : QuaverScreen, IHasLeftPanel
     {
         /// <summary>
         /// </summary>
@@ -47,6 +48,16 @@ namespace Quaver.Shared.Screens.Downloading
         /// <summary>
         /// </summary>
         public override QuaverScreenType Type { get; } = QuaverScreenType.Download;
+
+        /// <summary>
+        ///     The currently active panel on the left side of the screen
+        /// </summary>
+        public Bindable<LeftPanel> ActiveLeftPanel { get; set; }
+
+        /// <summary>
+        ///     Keeps track of if the user is play testing in the map preview
+        /// </summary>
+        public Bindable<bool> IsPlayTestingInPreview { get; private set; }
 
         /// <summary>
         ///     The currently displayed mapsets
@@ -254,6 +265,8 @@ namespace Quaver.Shared.Screens.Downloading
 
             SearchTask = new TaskHandler<int, int>(SearchMapsets);
 
+            ActiveLeftPanel = new Bindable<LeftPanel>(LeftPanel.DownloadFilter) { Value = LeftPanel.DownloadFilter };
+
 #if !VISUAL_TESTS
            // SetRichPresence();
 #endif
@@ -309,6 +322,7 @@ namespace Quaver.Shared.Screens.Downloading
             HandleKeyPressNext();
             HandleKeyPressPrevious();
             HandleKeyPressEnter();
+            HandleKeyPressF3();
         }
 
         /// <summary>
@@ -411,6 +425,14 @@ namespace Quaver.Shared.Screens.Downloading
                 return;
 
             SelectedMapset.Value = Mapsets.Value[index + 1];
+        }
+
+        private void HandleKeyPressF3()
+        {
+            if (!KeyboardManager.IsUniqueKeyPress(Keys.F3))
+                return;
+
+            ActiveLeftPanel.Value = ActiveLeftPanel.Value == LeftPanel.MapPreview ? LeftPanel.DownloadFilter : LeftPanel.MapPreview;
         }
 
         /// <summary>

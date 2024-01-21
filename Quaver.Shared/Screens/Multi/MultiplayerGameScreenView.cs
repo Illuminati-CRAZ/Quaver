@@ -104,11 +104,11 @@ namespace Quaver.Shared.Screens.Multi
             CreateMapPreview();
             CreateProfile();
 
-            Panels.Add(LeftPanels.MatchSettings, MatchSettings);
-            Panels.Add(LeftPanels.Leaderboard, Leaderboard);
-            Panels.Add(LeftPanels.Modifiers, Modifiers);
-            Panels.Add(LeftPanels.MapPreview, MapPreview);
-            Panels.Add(LeftPanels.UserProfile, Profile);
+            Panels.Add(LeftPanel.MatchSettings, MatchSettings);
+            Panels.Add(LeftPanel.Leaderboard, Leaderboard);
+            Panels.Add(LeftPanel.Modifiers, Modifiers);
+            Panels.Add(LeftPanel.MapPreview, MapPreview);
+            Panels.Add(LeftPanel.UserProfile, Profile);
 
             StatusPanel.Parent = Container;
             Header.Parent = Container;

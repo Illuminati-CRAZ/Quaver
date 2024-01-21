@@ -5,6 +5,6 @@ namespace Quaver.Shared.Screens
 {
     public interface IHasLeftPanel
     {
-        Bindable<LeftPanels> ActiveLeftPanel { get; set; }
+        Bindable<LeftPanel> ActiveLeftPanel { get; set; }
     }
 }

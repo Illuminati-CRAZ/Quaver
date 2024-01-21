@@ -85,7 +85,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.HitObjects
             // Disable hitsounds for left panel screens if the map preview isnt active
             if (game?.CurrentScreen is IHasLeftPanel screen)
             {
-                if (screen.ActiveLeftPanel.Value != LeftPanels.MapPreview)
+                if (screen.ActiveLeftPanel.Value != LeftPanel.MapPreview)
                     return;
             }
 
@@ -144,7 +144,7 @@ namespace Quaver.Shared.Screens.Gameplay.Rulesets.HitObjects
             // Disable hitsounds for left panel screens if the map preview isnt active
             if (game?.CurrentScreen is IHasLeftPanel screen)
             {
-                if (screen.ActiveLeftPanel.Value != LeftPanels.MapPreview)
+                if (screen.ActiveLeftPanel.Value != LeftPanel.MapPreview)
                     return;
             }
 

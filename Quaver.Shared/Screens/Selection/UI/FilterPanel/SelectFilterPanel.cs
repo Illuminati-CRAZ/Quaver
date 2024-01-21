@@ -44,7 +44,7 @@ namespace Quaver.Shared.Screens.Selection.UI.FilterPanel
 
         /// <summary>
         /// </summary>
-        private Bindable<LeftPanels> ActiveLeftPanel { get; }
+        private Bindable<LeftPanel> ActiveLeftPanel { get; }
 
         /// <summary>
         ///     Underlying button that prevents mapsets from being clicked from inside the area
@@ -99,7 +99,7 @@ namespace Quaver.Shared.Screens.Selection.UI.FilterPanel
         /// <summary>
         /// </summary>
         public SelectFilterPanel(Bindable<List<Mapset>> availableMapsets, Bindable<string> currentSearchQuery,
-            Bindable<bool> isPlayTesting, Bindable<LeftPanels> activeLeftPanel)
+            Bindable<bool> isPlayTesting, Bindable<LeftPanel> activeLeftPanel)
         {
             AvailableMapsets = availableMapsets;
             CurrentSearchQuery = currentSearchQuery;

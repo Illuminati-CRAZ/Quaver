@@ -44,7 +44,7 @@ namespace Quaver.Shared.Screens.Multi
         /// <summary>
         ///     The currently active panel on the left side of the screen
         /// </summary>
-        public Bindable<LeftPanels> ActiveLeftPanel { get; set; }
+        public Bindable<LeftPanel> ActiveLeftPanel { get; set; }
 
         /// <summary>
         ///     Keeps track of if the user is play testing in the map preview
@@ -158,9 +158,9 @@ namespace Quaver.Shared.Screens.Multi
         /// </summary>
         private void InitializeActiveLeftPanelBindable()
         {
-            ActiveLeftPanel = new Bindable<LeftPanels>(LeftPanels.MatchSettings)
+            ActiveLeftPanel = new Bindable<LeftPanel>(LeftPanel.MatchSettings)
             {
-                Value = LeftPanels.MatchSettings
+                Value = LeftPanel.MatchSettings
             };
         }
 
@@ -239,8 +239,8 @@ namespace Quaver.Shared.Screens.Multi
 
             if (KeyboardManager.IsUniqueKeyPress(Keys.Escape))
             {
-                if (ActiveLeftPanel.Value != LeftPanels.MatchSettings)
-                    ActiveLeftPanel.Value = LeftPanels.MatchSettings;
+                if (ActiveLeftPanel.Value != LeftPanel.MatchSettings)
+                    ActiveLeftPanel.Value = LeftPanel.MatchSettings;
                 else
                 {
                     Exit(() => new MultiplayerLobbyScreen());
@@ -248,7 +248,7 @@ namespace Quaver.Shared.Screens.Multi
                 }
             }
 
-            if (KeyboardManager.IsUniqueKeyPress(Keys.Tab) && ActiveLeftPanel.Value == LeftPanels.Leaderboard)
+            if (KeyboardManager.IsUniqueKeyPress(Keys.Tab) && ActiveLeftPanel.Value == LeftPanel.Leaderboard)
                 SelectionScreen.HandleKeyPressTab();
 
             HandleKeyPressControlInput();
@@ -305,40 +305,40 @@ namespace Quaver.Shared.Screens.Multi
         /// </summary>
         private void HandleKeyPressF1()
         {
-            if (ActiveLeftPanel.Value != LeftPanels.Modifiers)
-                ActiveLeftPanel.Value = LeftPanels.Modifiers;
+            if (ActiveLeftPanel.Value != LeftPanel.Modifiers)
+                ActiveLeftPanel.Value = LeftPanel.Modifiers;
             else
-                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanel.MatchSettings;
         }
 
         /// <summary>
         /// </summary>
         private void HandleKeyPressF2()
         {
-            if (ActiveLeftPanel.Value != LeftPanels.Leaderboard)
-                ActiveLeftPanel.Value = LeftPanels.Leaderboard;
+            if (ActiveLeftPanel.Value != LeftPanel.Leaderboard)
+                ActiveLeftPanel.Value = LeftPanel.Leaderboard;
             else
-                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanel.MatchSettings;
         }
 
         /// <summary>
         /// </summary>
         private void HandleKeyPressF3()
         {
-            if (ActiveLeftPanel.Value != LeftPanels.MapPreview)
-                ActiveLeftPanel.Value = LeftPanels.MapPreview;
+            if (ActiveLeftPanel.Value != LeftPanel.MapPreview)
+                ActiveLeftPanel.Value = LeftPanel.MapPreview;
             else
-                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanel.MatchSettings;
         }
 
         /// <summary>
         /// </summary>
         private void HandleKeyPressF4()
         {
-            if (ActiveLeftPanel.Value != LeftPanels.UserProfile)
-                ActiveLeftPanel.Value = LeftPanels.UserProfile;
+            if (ActiveLeftPanel.Value != LeftPanel.UserProfile)
+                ActiveLeftPanel.Value = LeftPanel.UserProfile;
             else
-                ActiveLeftPanel.Value = LeftPanels.MatchSettings;
+                ActiveLeftPanel.Value = LeftPanel.MatchSettings;
         }
 
         /// <summary>

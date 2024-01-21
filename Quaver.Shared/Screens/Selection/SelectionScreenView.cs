@@ -125,10 +125,10 @@ namespace Quaver.Shared.Screens.Selection
             CreateModifierSelectorContainer();
             CreateUserProfileContainer();
 
-            Panels.Add(LeftPanels.Leaderboard, LeaderboardContainer);
-            Panels.Add(LeftPanels.Modifiers, ModifierSelector);
-            Panels.Add(LeftPanels.MapPreview, MapPreviewContainer);
-            Panels.Add(LeftPanels.UserProfile, ProfileContainer);
+            Panels.Add(LeftPanel.Leaderboard, LeaderboardContainer);
+            Panels.Add(LeftPanel.Modifiers, ModifierSelector);
+            Panels.Add(LeftPanel.MapPreview, MapPreviewContainer);
+            Panels.Add(LeftPanel.UserProfile, ProfileContainer);
 
             // SelectScreen.ActiveLeftPanel.ValueChanged += OnActiveLeftPanelChanged;
             SelectScreen.AvailableMapsets.ValueChanged += OnAvailableMapsetsChanged;

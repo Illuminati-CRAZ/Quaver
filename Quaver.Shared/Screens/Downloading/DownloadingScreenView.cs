@@ -6,15 +6,18 @@ using Quaver.Shared.Screens.Downloading.UI.Filter;
 using Quaver.Shared.Screens.Downloading.UI.Footer;
 using Quaver.Shared.Screens.Downloading.UI.Mapsets;
 using Quaver.Shared.Screens.Downloading.UI.Search;
+using Quaver.Shared.Screens.Selection.UI;
+using Quaver.Shared.Screens.Selection.UI.Preview;
 using Wobble;
 using Wobble.Graphics;
 using Wobble.Graphics.Animations;
 using Wobble.Graphics.UI;
 using Wobble.Screens;
+using Wobble.Window;
 
 namespace Quaver.Shared.Screens.Downloading
 {
-    public class DownloadingScreenView : ScreenView
+    public class DownloadingScreenView : LeftPanelScreenView
     {
         /// <summary>
         /// </summary>
@@ -42,6 +45,10 @@ namespace Quaver.Shared.Screens.Downloading
 
         /// <summary>
         /// </summary>
+        private SelectMapPreviewContainer MapPreview { get; set; }
+
+        /// <summary>
+        /// </summary>
         private DownloadableMapsetContainer MapsetContainer { get; set; }
 
         /// <summary>
@@ -59,11 +66,15 @@ namespace Quaver.Shared.Screens.Downloading
             CreateFooter();
             CreateSearchPanel();
             CreateFilterContainer();
+            CreateMapPreview();
             CreateMapsetContainer();
 
             Header.Parent = Container;
             Footer.Parent = Container;
             SearchPanel.Parent = Container;
+
+            Panels.Add(LeftPanel.DownloadFilter, FilterContainer);
+            Panels.Add(LeftPanel.MapPreview, MapPreview);
 
             DownloadingScreen.ScreenExiting += OnScreenExiting;
         }
@@ -134,6 +145,21 @@ namespace Quaver.Shared.Screens.Downloading
 
             FilterContainer.X = -FilterContainer.Width - 50;
             FilterContainer.MoveToX(ScreenPaddingX, Easing.OutQuint, 450);
+        }
+
+        /// <summary>
+        /// </summary>
+        private void CreateMapPreview()
+        {
+            MapPreview = new SelectMapPreviewContainer(DownloadingScreen.IsPlayTestingInPreview, DownloadingScreen.ActiveLeftPanel,
+                (int)(WindowManager.Height - MenuBorder.HEIGHT * 2 - SearchPanel.Height))
+            {
+                Parent = Container,
+                Alignment = Alignment.TopLeft,
+                Y = SearchPanel.Y + SearchPanel.Height
+            };
+
+            MapPreview.X = -MapPreview.Width - ScreenPaddingX;
         }
 
         /// <summary>
