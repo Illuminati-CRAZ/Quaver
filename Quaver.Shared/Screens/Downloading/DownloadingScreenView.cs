@@ -45,7 +45,7 @@ namespace Quaver.Shared.Screens.Downloading
 
         /// <summary>
         /// </summary>
-        private SelectMapPreviewContainer MapPreview { get; set; }
+        public MapPreviewContainer MapPreview { get; private set; }
 
         /// <summary>
         /// </summary>
@@ -72,6 +72,7 @@ namespace Quaver.Shared.Screens.Downloading
             Header.Parent = Container;
             Footer.Parent = Container;
             SearchPanel.Parent = Container;
+            MapPreview.Parent = Container;
 
             Panels.Add(LeftPanel.DownloadFilter, FilterContainer);
             Panels.Add(LeftPanel.MapPreview, MapPreview);
@@ -151,8 +152,8 @@ namespace Quaver.Shared.Screens.Downloading
         /// </summary>
         private void CreateMapPreview()
         {
-            MapPreview = new SelectMapPreviewContainer(DownloadingScreen.IsPlayTestingInPreview, DownloadingScreen.ActiveLeftPanel,
-                (int)(WindowManager.Height - MenuBorder.HEIGHT * 2 - SearchPanel.Height))
+            MapPreview = new MapPreviewContainer(DownloadingScreen.IsPlayTestingInPreview, DownloadingScreen.ActiveLeftPanel,
+                (int)(WindowManager.Height - MenuBorder.HEIGHT * 2 - SearchPanel.Height), qua: DownloadingScreen.PreviewQua)
             {
                 Parent = Container,
                 Alignment = Alignment.TopLeft,

@@ -98,9 +98,9 @@ namespace Quaver.Shared.Screens.Gameplay
             if (Screen.IsPaused)
                 return;
 
-            var isTournanent = Screen is TournamentGameplayScreen;
+            var isTournament = Screen is TournamentGameplayScreen;
 
-            if (Screen.IsMultiplayerGame && !Screen.IsMultiplayerGameStarted && !isTournanent)
+            if (Screen.IsMultiplayerGame && !Screen.IsMultiplayerGameStarted && !isTournament)
                 return;
 
             // If the audio hasn't begun yet, start counting down until the beginning of the map.

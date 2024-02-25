@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json.Linq;
 using Quaver.API.Helpers;
+using Quaver.API.Maps;
 using Quaver.Server.Common.Enums;
 using Quaver.Server.Common.Objects;
 using Quaver.Shared.Audio;
@@ -28,6 +31,7 @@ using Quaver.Shared.Screens.Music;
 using Quaver.Shared.Screens.Selection;
 using Quaver.Shared.Screens.Selection.UI;
 using Quaver.Shared.Screens.Theater;
+using RestSharp;
 using Wobble.Audio;
 using Wobble.Audio.Tracks;
 using Wobble.Bindables;
@@ -193,6 +197,13 @@ namespace Quaver.Shared.Screens.Downloading
         ///    Cached audio tracks for the song previews
         /// </summary>
         public Dictionary<int, IAudioTrack> AudioPreviews { get; private set; } = new Dictionary<int, IAudioTrack>();
+
+        /// <summary>
+        ///     Cached quas for the map previews
+        /// </summary>
+        public Dictionary<int, Qua> MapPreviews { get; private set; } = new Dictionary<int, Qua>();
+
+        public Bindable<Qua> PreviewQua { get; private set; } = new Bindable<Qua>(null) { Value = null };
 
         /// <summary>
         ///     The song preview that is currently playing
@@ -830,7 +841,10 @@ namespace Quaver.Shared.Screens.Downloading
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnSelectedMapsetChanged(object sender, BindableValueChangedEventArgs<DownloadableMapset> e)
-            => LoadAudioPreview();
+        {
+            LoadMapPreview();
+            LoadAudioPreview();
+        }
 
         /// <summary>
         ///     Loads an plays the audio preview for the selected map
@@ -851,7 +865,7 @@ namespace Quaver.Shared.Screens.Downloading
 
                 if (SelectedMapset.Value != mapset)
                 {
-                    Logger.Debug($"Skipped preview load on: {mapset.Artist} - {mapset.Title}", LogType.Runtime, false);
+                    Logger.Debug($"Skipped audio preview load on: {mapset.Artist} - {mapset.Title}", LogType.Runtime, false);
                     return;
                 }
 
@@ -879,11 +893,77 @@ namespace Quaver.Shared.Screens.Downloading
 
                         if (ShouldPreviewPlay)
                             CurrentPreview.Play();
+
+                        // hacky?
+                        lock (AudioEngine.Track)
+                        {
+                            AudioEngine.Track = CurrentPreview;
+                        }
                     }
                     catch (Exception e)
                     {
                         Logger.Error(e, LogType.Network);
                     }
+                }
+            });
+        }
+
+        /// <summary>
+        /// </summary>
+        private void LoadMapPreview()
+        {
+            // unload map preview immediately on mapset change
+            PreviewQua.Value = null;
+
+            if (SelectedMapset.Value is null)
+                return;
+
+            var mapset = SelectedMapset.Value;
+
+            ThreadScheduler.Run(async () =>
+            {
+                await Task.Delay(250);
+
+                if (SelectedMapset.Value != mapset)
+                {
+                    Logger.Debug($"Skipped map preview load on: {mapset.Artist} - {mapset.Title}", LogType.Runtime, false);
+                    return;
+                }
+
+                try
+                {
+                    if (!MapPreviews.TryGetValue(SelectedMapset.Value.Id, out var qua))
+                    {
+                        using var client = new HttpClient();
+                        var response = await client.GetStringAsync($"https://api.quavergame.com/v1/mapsets/{SelectedMapset.Value.Id}");
+                        var json = JObject.Parse(response);
+                        var maps = json["mapset"]["maps"];
+                        var mapId = (int)maps.Last()["id"];
+
+                        var quaContent = await client.GetByteArrayAsync($"https://api.quavergame.com/d/web/map/{mapId}");
+                        qua = Qua.Parse(quaContent);
+
+                        // also hacky?
+                        foreach (var hitObject in qua.HitObjects)
+                        {
+                            hitObject.StartTime -= qua.SongPreviewTime;
+                            hitObject.EndTime = hitObject.EndTime == -1 ? -1 : hitObject.EndTime - qua.SongPreviewTime;
+                        }
+
+                        lock (MapPreviews)
+                        {
+                            MapPreviews.TryAdd(SelectedMapset.Value.Id, qua);
+                        }
+                    }
+
+                    lock (PreviewQua)
+                    {
+                        PreviewQua.Value = qua;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, LogType.Network);
                 }
             });
         }
